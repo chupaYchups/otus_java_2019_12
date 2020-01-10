@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ru.otus</groupId>
+    <artifactId>otus_java</artifactId>
+    <packaging>pom</packaging>
+    <version>2019-03-SNAPSHOT</version>
+
+    <modules>
+        <module>l01.1-maven</module>
+    </modules>
+
+    <developers>
+        <developer>
+            <name>chupaYchups</name>
+        </developer>
+    </developers>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <com.gooogle.guava.version>27.1-jre</com.gooogle.guava.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${com.gooogle.guava.version}</version>
+        </dependency>
+    </dependencies>
+</project>
