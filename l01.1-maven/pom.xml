@@ -9,9 +9,15 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>l01.1-maven</artifactId>
     <name>l01.1-maven</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+    </dependencies>
 
     <build>
         <finalName>${project.name}</finalName>

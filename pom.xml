@@ -25,11 +25,14 @@
         <com.gooogle.guava.version>27.1-jre</com.gooogle.guava.version>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${com.gooogle.guava.version}</version>
-        </dependency>
-    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${com.gooogle.guava.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
 </project>
