@@ -10,7 +10,7 @@
     <version>2019-03-SNAPSHOT</version>
 
     <modules>
-        <module>l01.1-maven</module>
+        <module>L01-maven</module>
     </modules>
 
     <developers>

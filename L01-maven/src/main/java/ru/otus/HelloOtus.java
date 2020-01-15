@@ -1,4 +1,4 @@
-package ru.otus.l011;
+package ru.otus;
 
 import com.google.common.primitives.Floats;
 
