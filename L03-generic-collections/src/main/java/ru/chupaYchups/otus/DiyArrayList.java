@@ -1,20 +1,46 @@
 package ru.chupaYchups.otus;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
+/**
+ * Имплементация индексированного списка
+ * в которой реализована:
+ * - добавление элементов
+ * - перебор элементов
+ * - замена элементов
+ * (Удалять нельзя!!!)
+ */
 public class DiyArrayList<T> implements List<T> {
+
+    public static Integer DEFAULT_CAPACITY = 10;
+
+    private static final Integer DEFAULT_INCREMENT_SIZE = 5;
+
+    private Object[] array;
+
+    //индекс последнего заполненного элемента массива
+    private Integer lastIndex;
+
+    public DiyArrayList() {
+        array = new Object[DEFAULT_CAPACITY];
+        //условно считаем пустым
+        lastIndex = -1;
+    }
+
+    public DiyArrayList(Integer capacity) {
+        array = new Object[capacity];
+        //условно считаем не пустым. Элементы - нулл
+        lastIndex = capacity - 1;
+    }
 
     @Override
     public int size() {
-        return 0;
+       return lastIndex + 1;
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return lastIndex == -1;
     }
 
     @Override
@@ -38,87 +64,163 @@ public class DiyArrayList<T> implements List<T> {
     }
 
     @Override
+    public void add(int i, T t) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public boolean add(T t) {
+        if (lastIndex + 1 < array.length) {
+            array[++lastIndex] = t;
+        } else {
+            array = Arrays.copyOf(array, array.length + DEFAULT_INCREMENT_SIZE);
+            array[++lastIndex] = t;
+        }
         return false;
-    }
-
-    @Override
-    public boolean remove(Object o) {
-        return false;
-    }
-
-    @Override
-    public boolean containsAll(Collection<?> collection) {
-        return false;
-    }
-
-    @Override
-    public boolean addAll(Collection<? extends T> collection) {
-        return false;
-    }
-
-    @Override
-    public boolean addAll(int i, Collection<? extends T> collection) {
-        return false;
-    }
-
-    @Override
-    public boolean removeAll(Collection<?> collection) {
-        return false;
-    }
-
-    @Override
-    public boolean retainAll(Collection<?> collection) {
-        return false;
-    }
-
-    @Override
-    public void clear() {
-
     }
 
     @Override
     public T get(int i) {
-        return null;
+        if (i < 0 || i > lastIndex) {
+            throw new IllegalArgumentException();
+        } else {
+            return (T)array[i];
+        }
     }
 
     @Override
     public T set(int i, T t) {
-        return null;
+        if (i < 0 || i > lastIndex) {
+            throw new IllegalArgumentException();
+        } else {
+            array[i] = t;
+        }
+        return t;
     }
 
     @Override
-    public void add(int i, T t) {
+    public boolean remove(Object o) {
+        throw new UnsupportedOperationException();
+    }
 
+    @Override
+    public boolean containsAll(Collection<?> collection) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends T> collection) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean addAll(int i, Collection<? extends T> collection) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> collection) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> collection) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void clear() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public T remove(int i) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public int indexOf(Object o) {
-        return 0;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        return 0;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public ListIterator<T> listIterator() {
-        return null;
+        return new DIYListIterator();
     }
 
     @Override
     public ListIterator<T> listIterator(int i) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public List<T> subList(int i, int i1) {
-        return null;
+        throw new UnsupportedOperationException();
+    }
+
+    private void incrementArray() {
+        array = Arrays.copyOf(array, array.length + DEFAULT_INCREMENT_SIZE);
+    }
+
+
+    private class DIYIterator implements Iterator<T> {
+
+        protected Integer currentIndex = -1;
+
+        @Override
+        public boolean hasNext() {
+            return currentIndex < DiyArrayList.this.size() - 1;
+        }
+
+        @Override
+        public T next() {
+            if (currentIndex >= DiyArrayList.this.array.length - 1) {
+                incrementArray();
+            }
+            return DiyArrayList.this.get(++currentIndex);
+        }
+    }
+
+    private class DIYListIterator extends DIYIterator implements ListIterator<T> {
+
+        @Override
+        public boolean hasPrevious() {
+            return currentIndex > 0;
+        }
+
+        @Override
+        public T previous() {
+            return DiyArrayList.this.get(--currentIndex);
+        }
+
+        @Override
+        public int nextIndex() {
+            return currentIndex + 1;
+        }
+
+        @Override
+        public int previousIndex() {
+            return currentIndex - 1;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void set(T t) {
+            DiyArrayList.this.set(currentIndex, t);
+        }
+
+        @Override
+        public void add(T t) {
+            DiyArrayList.this.set(DiyArrayList.this.size(), t);
+        }
     }
 }
