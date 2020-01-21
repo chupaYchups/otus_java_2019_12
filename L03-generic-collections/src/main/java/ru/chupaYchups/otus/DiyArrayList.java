@@ -59,7 +59,7 @@ public class DiyArrayList<T> implements List<T> {
 
     @Override
     public <T1> T1[] toArray(T1[] t1s) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
