@@ -56,14 +56,14 @@ public class DiyArrayListTest {
 
     @Test
     public void testSort() {
-        final String[] orderedString = {"testString2", "testString3", "testString4", "testString5", "testString6"};
+        final String[] orderedStrings = {"testString2", "testString3", "testString4", "testString5", "testString6"};
         List<String> myTestList = new DiyArrayList<>();
         Collections.addAll(myTestList, "testString4", "testString5", "testString3", "testString2", "testString6");
 
         //Вызов тестируемого метода
         Collections.sort(myTestList, Comparator.naturalOrder());
 
-        Assert.assertTrue(Arrays.equals(myTestList.toArray(), orderedString));
+        Assert.assertTrue(Arrays.equals(myTestList.toArray(), orderedStrings));
     }
 
 

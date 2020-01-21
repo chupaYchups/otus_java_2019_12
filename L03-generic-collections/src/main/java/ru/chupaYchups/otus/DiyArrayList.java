@@ -13,33 +13,30 @@ public class DiyArrayList<T> implements List<T> {
 
     public static int DEFAULT_CAPACITY = 10;
 
-    private static final Integer DEFAULT_INCREMENT_SIZE = 5;
+    private static final int DEFAULT_INCREMENT_SIZE = 5;
 
     private Object[] array;
 
-    //индекс последнего заполненного элемента массива
-    private Integer lastIndex;
+    private int listSize;
 
     public DiyArrayList() {
         array = new Object[DEFAULT_CAPACITY];
-        //условно считаем пустым
-        lastIndex = -1;
+        listSize = 0;
     }
 
     public DiyArrayList(Integer capacity) {
         array = new Object[capacity];
-        //условно считаем не пустым. Элементы - нулл
-        lastIndex = capacity - 1;
+        listSize = capacity;
     }
 
     @Override
     public int size() {
-       return lastIndex + 1;
+       return listSize;
     }
 
     @Override
     public boolean isEmpty() {
-        return lastIndex == -1;
+        return listSize == 0;
     }
 
     @Override
@@ -54,7 +51,7 @@ public class DiyArrayList<T> implements List<T> {
 
     @Override
     public Object[] toArray() {
-        return Arrays.copyOf(array, lastIndex + 1);
+        return Arrays.copyOf(array, listSize);
     }
 
     @Override
@@ -69,19 +66,19 @@ public class DiyArrayList<T> implements List<T> {
 
     @Override
     public boolean add(T t) {
-        if (lastIndex + 1 < array.length) {
-            array[++lastIndex] = t;
+        if (listSize < array.length) {
+            array[listSize++] = t;
         } else {
             resizeArray();
-            array[++lastIndex] = t;
+            array[listSize++] = t;
         }
         return false;
     }
 
     @Override
     public T get(int i) {
-        if (i < 0 || i > lastIndex) {
-            throw new IllegalArgumentException();
+        if (i < 0 || i >= listSize) {
+            throw new IndexOutOfBoundsException(i);
         } else {
             return (T)array[i];
         }
@@ -89,8 +86,8 @@ public class DiyArrayList<T> implements List<T> {
 
     @Override
     public T set(int i, T t) {
-        if (i < 0 || i > lastIndex) {
-            throw new IllegalArgumentException();
+        if (i < 0 || i >= listSize) {
+            throw new IndexOutOfBoundsException(i);
         } else {
             array[i] = t;
         }
@@ -168,19 +165,25 @@ public class DiyArrayList<T> implements List<T> {
 
     private class DIYIterator implements Iterator<T> {
 
-        protected Integer currentIndex = -1;
+        private final static int EMPTY_ITERATOR_CURRENT_EL_INDEX = -1;
+
+        protected int currentElementIndex;
+
+        public DIYIterator() {
+            currentElementIndex = EMPTY_ITERATOR_CURRENT_EL_INDEX;
+        }
 
         @Override
         public boolean hasNext() {
-            return currentIndex < DiyArrayList.this.size() - 1;
+            return currentElementIndex < DiyArrayList.this.size() - 1;
         }
 
         @Override
         public T next() {
-            if (currentIndex >= DiyArrayList.this.array.length - 1) {
+            if (currentElementIndex >= DiyArrayList.this.array.length - 1) {
                 resizeArray();
             }
-            return DiyArrayList.this.get(++currentIndex);
+            return DiyArrayList.this.get(++currentElementIndex);
         }
     }
 
@@ -188,22 +191,22 @@ public class DiyArrayList<T> implements List<T> {
 
         @Override
         public boolean hasPrevious() {
-            return currentIndex > 0;
+            return currentElementIndex > 0;
         }
 
         @Override
         public T previous() {
-            return DiyArrayList.this.get(--currentIndex);
+            return DiyArrayList.this.get(--currentElementIndex);
         }
 
         @Override
         public int nextIndex() {
-            return currentIndex + 1;
+            return currentElementIndex + 1;
         }
 
         @Override
         public int previousIndex() {
-            return currentIndex - 1;
+            return currentElementIndex - 1;
         }
 
         @Override
@@ -213,7 +216,7 @@ public class DiyArrayList<T> implements List<T> {
 
         @Override
         public void set(T t) {
-            DiyArrayList.this.set(currentIndex, t);
+            DiyArrayList.this.set(currentElementIndex, t);
         }
 
         @Override
