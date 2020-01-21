@@ -8,7 +8,6 @@ import java.util.*;
  * - добавление элементов
  * - перебор элементов
  * - замена элементов
- * (Удалять нельзя!!!)
  */
 public class DiyArrayList<T> implements List<T> {
 
@@ -45,17 +44,17 @@ public class DiyArrayList<T> implements List<T> {
 
     @Override
     public boolean contains(Object o) {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Iterator<T> iterator() {
-        return null;
+        return new DIYIterator();
     }
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        return Arrays.copyOf(array, lastIndex + 1);
     }
 
     @Override
@@ -73,7 +72,7 @@ public class DiyArrayList<T> implements List<T> {
         if (lastIndex + 1 < array.length) {
             array[++lastIndex] = t;
         } else {
-            array = Arrays.copyOf(array, array.length + DEFAULT_INCREMENT_SIZE);
+            resizeArray();
             array[++lastIndex] = t;
         }
         return false;
@@ -98,6 +97,10 @@ public class DiyArrayList<T> implements List<T> {
         return t;
     }
 
+    private void resizeArray() {
+        array = Arrays.copyOf(array, array.length + DEFAULT_INCREMENT_SIZE);
+    }
+
     @Override
     public boolean remove(Object o) {
         throw new UnsupportedOperationException();
@@ -105,7 +108,7 @@ public class DiyArrayList<T> implements List<T> {
 
     @Override
     public boolean containsAll(Collection<?> collection) {
-        throw new UnsupportedOperationException();
+        throw new IndexOutOfBoundsException();
     }
 
     @Override
@@ -163,11 +166,6 @@ public class DiyArrayList<T> implements List<T> {
         throw new UnsupportedOperationException();
     }
 
-    private void incrementArray() {
-        array = Arrays.copyOf(array, array.length + DEFAULT_INCREMENT_SIZE);
-    }
-
-
     private class DIYIterator implements Iterator<T> {
 
         protected Integer currentIndex = -1;
@@ -180,7 +178,7 @@ public class DiyArrayList<T> implements List<T> {
         @Override
         public T next() {
             if (currentIndex >= DiyArrayList.this.array.length - 1) {
-                incrementArray();
+                resizeArray();
             }
             return DiyArrayList.this.get(++currentIndex);
         }
