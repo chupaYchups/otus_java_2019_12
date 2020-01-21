@@ -11,7 +11,7 @@ import java.util.*;
  */
 public class DiyArrayList<T> implements List<T> {
 
-    public static Integer DEFAULT_CAPACITY = 10;
+    public static int DEFAULT_CAPACITY = 10;
 
     private static final Integer DEFAULT_INCREMENT_SIZE = 5;
 
