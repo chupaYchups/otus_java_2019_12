@@ -4,10 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import ru.chupaYchups.otus.DiyArrayList;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -19,21 +16,21 @@ public class DiyArrayListTest {
 
     @Test
     public void testAddAll() {
-        String[] testStringArray = new String[TEST_DATA_DEFAULT_SIZE];
-        final String[] additionalStrings = {"testString1", "testString2", "testString3", "testString4", "testString5"};
+        List<String> okResultList = new ArrayList<>(TEST_DATA_DEFAULT_SIZE);
+        List<String> additionalElements = Arrays.asList("testString1", "testString2", "testString3", "testString4", "testString5");
         List<String> myTestList = new DiyArrayList<>();
         for (int i = 0; i < TEST_DATA_DEFAULT_SIZE; i++) {
             String testStr = "test " + i;
             myTestList.add(testStr);
-            testStringArray[i] = testStr;
+            okResultList.add(testStr);
         }
-        testStringArray =  Stream.concat(Stream.of(testStringArray), Stream.of(additionalStrings)).toArray(String[]::new);
+        okResultList.addAll(additionalElements);
 
         //Вызов тестируемого метода
         Collections.addAll(myTestList, "testString1", "testString2", "testString3", "testString4", "testString5");
 
         Assert.assertEquals(myTestList.size(), TEST_DATA_DEFAULT_SIZE + 5);
-        Assert.assertTrue(Arrays.equals(myTestList.toArray(), testStringArray));
+        Assert.assertTrue(Arrays.equals(myTestList.toArray(), okResultList.toArray()));
     }
 
     @Test
