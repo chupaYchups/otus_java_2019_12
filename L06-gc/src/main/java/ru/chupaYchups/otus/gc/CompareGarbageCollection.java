@@ -9,16 +9,17 @@ import java.lang.management.ManagementFactory;
 import java.util.List;
 
 public class CompareGarbageCollection {
+
     public static void main(String[] args) throws InterruptedException {
         long startTime = System.currentTimeMillis();
-        try{
-
+        MemoryTerror terror = new MemoryTerror();
+        try {
             System.out.println("Starting pid : " + ManagementFactory.getRuntimeMXBean().getName() );
             switchOnMonitoring();
-            new MemoryTerror().start();
+            terror.start();
         }
         finally {
-            System.out.println("Working time" + (System.currentTimeMillis() - startTime));
+            System.out.println("Efficiency : " + terror.getAddingElementsCounter() / (System.currentTimeMillis() - startTime));
         }
     }
 

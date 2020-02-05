@@ -5,6 +5,9 @@ import java.util.List;
 
 public class MemoryTerror {
 
+    public static final int ELEMENT_VALUE = 7;
+    private int addingElementsCounter;
+
     private List<Integer> intList = new ArrayList<>();
 
     public void start() throws InterruptedException {
@@ -15,12 +18,21 @@ public class MemoryTerror {
                 List subList = intList.subList(0, elementToDelCount - 1);
                 subList.clear();
                 for (int i = 0; i < 2 * elementToDelCount; i++) {
-                    intList.add(7);
+                    addElement();
                 }
             } else {
-                intList.add(7);
+                addElement();
             }
-            Thread.sleep(5000);
+            Thread.sleep(7000);
         }
+    }
+
+    private void addElement() {
+        intList.add(ELEMENT_VALUE);
+        addingElementsCounter++;
+    }
+
+    public int getAddingElementsCounter() {
+        return addingElementsCounter;
     }
 }
