@@ -2,10 +2,9 @@ package ru.chupaYchups.test;
 
 import org.junit.Assert;
 import org.junit.Test;
-import ru.chupaYchups.otus.DiyArrayList;
+import ru.chupaYchups.otus.gc.DiyArrayList;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 /**
  * Тест работоспособности реализации списка DiyArrayList
@@ -39,7 +38,7 @@ public class DiyArrayListTest {
         String[] copiedArray = new String[TEST_DATA_DEFAULT_SIZE];
         for (int i = 0; i < TEST_DATA_DEFAULT_SIZE; i++) {
             String text = "test " + "i";
-            myTestListSrc.add(text);
+                myTestListSrc.add(text);
             copiedArray[i] = text;
         }
         List<String> myTestListDest = new DiyArrayList<>(TEST_DATA_DEFAULT_SIZE);
