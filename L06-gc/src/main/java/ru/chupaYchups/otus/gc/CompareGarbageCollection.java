@@ -6,24 +6,66 @@ import javax.management.NotificationListener;
 import javax.management.openmbean.CompositeData;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CompareGarbageCollection {
 
-    public static void main(String[] args) throws InterruptedException {
-        long startTime = System.currentTimeMillis();
-        MemoryTerror terror = new MemoryTerror();
-        try {
-            System.out.println("Starting pid : " + ManagementFactory.getRuntimeMXBean().getName() );
-            switchOnMonitoring();
-            terror.start();
+    private enum GenerationType {
+        OLD("major GC"),
+        YOUNG("minor GC");
+        private String logToken;
+        GenerationType(String logToken) {
+            this.logToken = logToken;
         }
-        finally {
-            System.out.println("Efficiency : " + terror.getAddingElementsCounter() / (System.currentTimeMillis() - startTime));
+        public String getLogToken() {
+            return logToken;
+        }
+        public static GenerationType getByLogString(String logString) {
+            for (GenerationType type : GenerationType.values()) {
+                if (logString.contains(type.getLogToken())) {
+                    return type;
+                }
+            }
+            throw new IllegalArgumentException("There is no generation type for string : " + logString);
         }
     }
 
-    private static void switchOnMonitoring() {
+    private static class GarbageCollectionStat {
+        private long duration;
+        private int buildCounter;
+        public long getDuration() {
+            return duration;
+        }
+        public int getBuildCounter() {
+            return buildCounter;
+        }
+        public void addToStat(long duration) {
+            buildCounter++;
+            this.duration += duration;
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        System.out.println("Starting pid : " + ManagementFactory.getRuntimeMXBean().getName() );
+        Map<GenerationType, GarbageCollectionStat> statistic = new HashMap<>();
+        statistic.put(GenerationType.OLD, new GarbageCollectionStat());
+        statistic.put(GenerationType.YOUNG, new GarbageCollectionStat());
+        switchOnMonitoring(statistic);
+        MemoryTerror terror = new MemoryTerror();
+        long startTime = System.currentTimeMillis();
+        try {
+            terror.start();
+        }
+        finally {
+            Thread.sleep(5000);
+            System.out.print("Work time : " +  (System.currentTimeMillis() - startTime) + ", quantity of added objects : " + terror.getAddingElementsCounter());
+            statistic.forEach((generationType, garbageCollectionStat) -> System.out.print(", " + generationType.name() + " : (buildCount = " + garbageCollectionStat.getBuildCounter() +", duration = " + garbageCollectionStat.getDuration() + ")"));
+        }
+    }
+
+    private static void switchOnMonitoring(final Map<GenerationType, GarbageCollectionStat> statistic) {
         List<GarbageCollectorMXBean> gcMbeans = ManagementFactory.getGarbageCollectorMXBeans();
         gcMbeans.forEach(gcMbean -> {
             System.out.println("GC name:" +  gcMbean.getName());
@@ -36,6 +78,8 @@ public class CompareGarbageCollection {
                     String gcCause = info.getGcCause();
                     long startTime = info.getGcInfo().getStartTime();
                     long duration = info.getGcInfo().getDuration();
+                    GarbageCollectionStat stat = statistic.get(GenerationType.getByLogString(gcAction));
+                    stat.addToStat(duration);
                     System.out.println( "start:" + startTime + " Name:" + gcName + ", action:" + gcAction + ", gcCause:" + gcCause + "(" + duration + " ms)" );
                 }
             };

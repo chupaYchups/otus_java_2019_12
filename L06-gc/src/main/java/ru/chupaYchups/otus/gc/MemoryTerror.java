@@ -7,7 +7,6 @@ public class MemoryTerror {
 
     public static final int ELEMENT_VALUE = 7;
     private int addingElementsCounter;
-
     private List<Integer> intList = new ArrayList<>();
 
     public void start() throws InterruptedException {
@@ -23,7 +22,7 @@ public class MemoryTerror {
             } else {
                 addElement();
             }
-            Thread.sleep(7000);
+//            Thread.sleep(7000);
         }
     }
 
