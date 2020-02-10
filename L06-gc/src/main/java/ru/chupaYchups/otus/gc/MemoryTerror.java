@@ -22,7 +22,7 @@ public class MemoryTerror {
             } else {
                 addElement();
             }
-//            Thread.sleep(7000);
+            Thread.sleep(7000);
         }
     }
 
