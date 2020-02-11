@@ -2,5 +2,5 @@
 java developer otus course
 
 Cтудент:
-Ivan Che (Иван Чупахин)
+Ivan Chupakhin (Иван Чупахин)
 chupaYchups@gmail.com
