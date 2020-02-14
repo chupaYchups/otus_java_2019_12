@@ -32,9 +32,9 @@ public class IoC {
 
         private void collectLoggingMethods(Class<? extends Annotation> annotationClass, ITestLogging testLoggingImpl) {
             Method[] methods = testLoggingImpl.getClass().getMethods();
-            for (int i = 0; i < methods.length; i++) {
-                if (methods[i].isAnnotationPresent(annotationClass)) {
-                    logMethodNames.add(methods[i].getName());
+            for (Method method : methods) {
+                if (method.isAnnotationPresent(annotationClass)) {
+                    logMethodNames.add(method.getName());
                 }
             }
         }
