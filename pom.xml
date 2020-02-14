@@ -12,6 +12,7 @@
     <modules>
         <module>L01-maven</module>
         <module>L03-generic-collections</module>
+        <module>L09-annotations</module>
     </modules>
 
     <developers>
@@ -33,7 +34,7 @@
                 <artifactId>guava</artifactId>
                 <version>${com.gooogle.guava.version}</version>
             </dependency>
-            <dependency>
+                <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>4.13-rc-2</version>
