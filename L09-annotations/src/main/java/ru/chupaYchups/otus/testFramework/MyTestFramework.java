@@ -5,7 +5,7 @@ import ru.chupaYchups.otus.testFramework.test.runner.TestRunner;
 
 public class MyTestFramework {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ReflectiveOperationException {
         if (args.length != 1) {
             System.out.println("There are too many command line params for program");
         }

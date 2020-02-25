@@ -13,47 +13,44 @@ public class TestRunner {
 
     private final List<Class<? extends Annotation>> supportedAnnotationClasses = Arrays.asList(BeforeEach.class, AfterEach.class, Test.class);
 
-    private HashMap<Class<? extends Annotation>, List<Method>> annotationMethods;
+    private Map<Class<? extends Annotation>, List<Method>> methodsWithAnnotation;
 
     public TestRunner(Class testClass) {
         this.classOfTest = testClass;
-        annotationMethods = new HashMap<>();
-        supportedAnnotationClasses.forEach(aClass -> annotationMethods.put(aClass, new ArrayList<>()));
+        collectTestMethods(testClass);
     }
 
     private void collectTestMethods(Class testClass) {
-        annotationMethods = new HashMap<>();
+        methodsWithAnnotation = new HashMap<>();
+        supportedAnnotationClasses.forEach(aClass -> methodsWithAnnotation.put(aClass, new ArrayList<>()));
         for (Method declaredMethod : testClass.getDeclaredMethods()) {
             for (Annotation declaredAnnotation : declaredMethod.getDeclaredAnnotations()) {
-                if (supportedAnnotationClasses.contains(declaredAnnotation.getClass())) {
-                    annotationMethods.get(declaredAnnotation.getClass()).add(declaredMethod);
+                if (supportedAnnotationClasses.contains(declaredAnnotation.annotationType())) {
+                    methodsWithAnnotation.get(declaredAnnotation.annotationType()).add(declaredMethod);
                 }
             }
         }
     }
 
-    public void run() {
-        collectTestMethods(classOfTest);
-        List<Method> beforeTestMethods = annotationMethods.get(BeforeEach.class);
-        List<Method> afterTestMethods = annotationMethods.get(AfterEach.class);
+    public void run() throws ReflectiveOperationException {
         try {
-            for (Method method : annotationMethods.get(Test.class)) {
-                runOneTest(method, beforeTestMethods, afterTestMethods);
+            for (Method testMethod : methodsWithAnnotation.get(Test.class)) {
+                runOneTest(testMethod);
             }
         } catch (ReflectiveOperationException exc) {
             System.out.println("Test running failed with exception : " + exc.toString());
             exc.printStackTrace();
+            throw exc;
         }
     }
 
-    private void runOneTest(Method method, List<Method> beforeMethods, List<Method> afterMethods) throws ReflectiveOperationException {
-        Object instance;
-        instance = classOfTest.getDeclaredConstructor().newInstance();
-        for (Method beforeMethod : beforeMethods) {
+    private void runOneTest(Method method) throws ReflectiveOperationException {
+        Object instance = classOfTest.getDeclaredConstructor().newInstance();
+        for (Method beforeMethod : methodsWithAnnotation.get(BeforeEach.class)) {
             beforeMethod.invoke(instance);
         }
         method.invoke(instance);
-        for (Method afterMethod : afterMethods) {
+        for (Method afterMethod : methodsWithAnnotation.get(AfterEach.class)) {
             afterMethod.invoke(instance);
         }
     }
