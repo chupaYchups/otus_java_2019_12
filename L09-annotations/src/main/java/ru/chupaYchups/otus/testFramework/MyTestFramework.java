@@ -5,9 +5,9 @@ import ru.chupaYchups.otus.testFramework.test.runner.TestRunner;
 
 public class MyTestFramework {
 
-    public static void main(String[] args) throws ReflectiveOperationException {
+    public static void main(String[] args) {
         if (args.length != 1) {
-            System.out.println("There are too many command line params for program");
+            throw new RuntimeException("There are too many command line params for program");
         }
         Class testClass;
         String className = args[0];
@@ -16,9 +16,14 @@ public class MyTestFramework {
         }
         catch (ClassNotFoundException e) {
             e.printStackTrace();
-            throw new IllegalArgumentException("Have no such test class " + className);
+            throw new IllegalArgumentException("Have no such test class : " + className);
         }
         TestRunner runner = new TestRunner(testClass);
-        runner.run();
+        try {
+            runner.run();
+        } catch (ReflectiveOperationException exc) {
+            exc.printStackTrace();
+            throw new RuntimeException("Test running failed with exception : " + exc.toString());
+        }
     }
 }
