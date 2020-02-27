@@ -1,15 +1,15 @@
-package ru.chupaYchups.atm.bill;
+package ru.chupaYchups.bill;
 
-public class BillImpl implements Bill {
+public class RubleBill implements Bill {
 
     private BillNominal billNominal;
 
-    public BillImpl(BillNominal billNominal) {
+    public RubleBill(BillNominal billNominal) {
         this.billNominal = billNominal;
     }
 
     @Override
     public BillNominal getNominal() {
-        return null;
+        return billNominal;
     }
 }

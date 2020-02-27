@@ -1,7 +1,6 @@
-package ru.chupaYchups.atm.bill;
+package ru.chupaYchups.bill;
 
 public enum BillNominal {
-
     NOMINAL_50 (50),
     NOMINAL_100(100),
     NOMINAL_1000(1000);
@@ -11,4 +10,12 @@ public enum BillNominal {
     }
 
     private int nominal;
+
+    public int getNominal() {
+        return nominal;
+    }
+
+    public static int getMinimalNominal() {
+        return NOMINAL_50.getNominal();
+    }
 }
