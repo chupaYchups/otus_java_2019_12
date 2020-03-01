@@ -1,37 +1,47 @@
 package ru.chupaYchups.atm;
 
-import ru.chupaYchups.bill.Bill;
-import ru.chupaYchups.bill.BillNominal;
-import ru.chupaYchups.cell.ATMCell;
-import ru.chupaYchups.cell.ATMCellImpl;
+import ru.chupaYchups.atm.bill.Bill;
+import ru.chupaYchups.atm.bill.BillNominal;
+import ru.chupaYchups.atm.cell.ATMCell;
+import ru.chupaYchups.atm.cell.ATMCellImpl;
+import ru.chupaYchups.atm.cell.operation.AtmCellGroupCommand;
+import ru.chupaYchups.atm.cell.operation.InspectCellsForMoneyCommand;
+
 import java.util.*;
 
 public class ATMImpl implements ATM {
 
     private NavigableMap<BillNominal, ATMCell> cellByNominalMap;
 
-    ATMImpl(List<BillNominal> nominals) {
-        cellByNominalMap = new TreeMap<>(Comparator.comparingInt(billNominal -> billNominal.getNominal()));
-        nominals.forEach(billNominal -> cellByNominalMap.put(billNominal, new ATMCellImpl()));
+    private List<BillNominal> nominals;
+
+    ATMImpl(final List<BillNominal> nominals) {
+        if (nominals.isEmpty()) {
+            throw new IllegalArgumentException("list of nominals cannot be empty");
+        }
+        this.nominals = nominals;
+        cellByNominalMap = new TreeMap<>(Comparator.<BillNominal>comparingInt(b -> b.getNominal()).reversed());
+        nominals.forEach(billNominal -> {cellByNominalMap.put(billNominal, new ATMCellImpl(billNominal));});
     }
 
     @Override
-    public List<Bill> getSumm(int summ) {
-        if (summ % BillNominal.getMinimalNominal() != 0) {
+    public List<Bill> getSumm(final int summ) {
+        if (summ > getBalance() && (summ % cellByNominalMap.lastKey().getNominal() != 0)) {
             throw new IllegalArgumentException("Cannot get such summ : " + summ);
         }
         List<Bill> billList = new ArrayList<>();
-        for (Map.Entry<BillNominal, ATMCell> entry : cellByNominalMap.descendingMap().entrySet()) {
-            ATMCell atmCell = entry.getValue();
-            if (!atmCell.isEmpty()) {
-                int nominal = entry.getKey().getNominal();
-                int qtyToGet = summ / nominal;
-                List<Bill> existsBills = atmCell.getBills(qtyToGet);
-                summ -= existsBills.size() * nominal;
-                billList.addAll(existsBills);
-            }
+        AtmCellGroupCommand inspectCellsForMoneyCommand = new InspectCellsForMoneyCommand(summ);
+        Iterator<Map.Entry<BillNominal, ATMCell>> iterator = cellByNominalMap.entrySet().iterator();
+        while (!inspectCellsForMoneyCommand.isFinished() && iterator.hasNext()) {
+            inspectCellsForMoneyCommand.execute(iterator.next().getValue());
         }
-
+        if (!inspectCellsForMoneyCommand.isFinished()) {
+            throw new IllegalArgumentException("Summ cannot be returned : " + summ);
+        }
+        Map<ATMCell, Integer> result = (Map<ATMCell, Integer>) inspectCellsForMoneyCommand.getResult();
+        result.forEach((atmCell, i) -> {
+            billList.addAll(atmCell.getBills(i));
+        });
         return billList;
     }
 
@@ -41,6 +51,11 @@ public class ATMImpl implements ATM {
     }
 
     @Override
-    public void getBalance() {
+    public int getBalance() {
+        return cellByNominalMap.
+            entrySet().
+            stream().
+            mapToInt(entry -> entry.getValue().getBalance()).
+            sum();
     }
 }

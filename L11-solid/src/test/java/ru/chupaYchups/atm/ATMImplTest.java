@@ -1,8 +1,9 @@
 package ru.chupaYchups.atm;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.chupaYchups.bill.RubleBill;
-import ru.chupaYchups.bill.BillNominal;
+import ru.chupaYchups.atm.bill.BillFactory;
+import ru.chupaYchups.atm.bill.RubleBill;
+import ru.chupaYchups.atm.bill.BillNominal;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,8 +15,11 @@ class ATMImplTest {
     void getSummSucess() {
         ATMFactory atmFactory = new ATMFactory(List.of(BillNominal.values()));
         ATM atm = atmFactory.createATM();
-        atm.putSumm(List.of(new RubleBill(BillNominal.NOMINAL_1000)));
-        assertTrue(atm.getSumm(1000).size() > 0);
+        atm.putSumm(BillFactory.createBillList(3, BillNominal.NOMINAL_1000));
+        atm.putSumm(BillFactory.createBillList(3, BillNominal.NOMINAL_500));
+        atm.putSumm(BillFactory.createBillList(3, BillNominal.NOMINAL_100));
+        atm.putSumm(BillFactory.createBillList(3, BillNominal.NOMINAL_50));
+        assertEquals(4, atm.getSumm(2150).size());
     }
 
     @Test

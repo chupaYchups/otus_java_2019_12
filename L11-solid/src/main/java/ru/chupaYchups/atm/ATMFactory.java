@@ -1,6 +1,6 @@
 package ru.chupaYchups.atm;
 
-import ru.chupaYchups.bill.BillNominal;
+import ru.chupaYchups.atm.bill.BillNominal;
 
 import java.util.List;
 

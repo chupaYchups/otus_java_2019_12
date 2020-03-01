@@ -1,4 +1,4 @@
-package ru.chupaYchups.bill;
+package ru.chupaYchups.atm.bill;
 
 public class RubleBill implements Bill {
 
