@@ -4,12 +4,12 @@ import ru.chupaYchups.atm.cell.ATMCell;
 import java.util.HashMap;
 import java.util.Map;
 
-public class InspectCellsForMoneyCommand implements AtmCellGroupCommand {
+public class InspectForSummCommand implements AtmCellChainCommand {
 
     private int summToGet;
     private Map<ATMCell, Integer> resultMap = new HashMap<>();
 
-    public InspectCellsForMoneyCommand(int summToGet) {
+    public InspectForSummCommand(int summToGet) {
         this.summToGet = summToGet;
     }
 
@@ -30,7 +30,7 @@ public class InspectCellsForMoneyCommand implements AtmCellGroupCommand {
     }
 
     @Override
-    public Map<ATMCell, ?> getResult() {
+    public Map<ATMCell, Integer> getResult() {
         return resultMap;
     }
 }

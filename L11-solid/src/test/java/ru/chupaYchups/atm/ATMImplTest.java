@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import ru.chupaYchups.atm.bill.Bill;
 import ru.chupaYchups.atm.bill.BillFactory;
 import ru.chupaYchups.atm.bill.BillNominal;
+import ru.chupaYchups.atm.exception.AtmException;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -18,7 +19,7 @@ class ATMImplTest {
     private static  ATMFactory atmFactory;
     private ATM atm;
 
-    final int TEST_SUMM_VALUE = 2150;
+    private final int TEST_SUMM_VALUE = 2150;
 
     @BeforeAll
     static void beforeAll() {
@@ -40,8 +41,7 @@ class ATMImplTest {
 
         List<Bill> billList = atm.getSumm(2150);
 
-        Assertions.
-            assertThat(billList).
+        Assertions.assertThat(billList).
             hasSize(4).
             extracting("nominal").
             containsExactlyInAnyOrder(BillNominal.NOMINAL_100,
@@ -54,7 +54,7 @@ class ATMImplTest {
     @DisplayName("Возвращает ошибку, с сообщением о нехватке денег, если суммы на счету недостаточно")
     void getSummHaveNoMoney() {
         org.assertj.core.api.Assertions.assertThatThrownBy(() -> atm.getSumm(2150)).
-            isInstanceOf(IllegalArgumentException.class).
+            isInstanceOf(AtmException.class).
             hasMessageContaining("Cannot get such summ : " + TEST_SUMM_VALUE);
     }
 
@@ -64,7 +64,7 @@ class ATMImplTest {
         atm.putSumm(BillFactory.createBillList(2, BillNominal.NOMINAL_1000));
         atm.putSumm(BillFactory.createBillList(3, BillNominal.NOMINAL_100));
         atm.putSumm(BillFactory.createBillList(3, BillNominal.NOMINAL_50));
-        assertThrows(IllegalArgumentException.class, () -> atm.getSumm(TEST_SUMM_VALUE + 4));
+        assertThrows(AtmException.class, () -> atm.getSumm(TEST_SUMM_VALUE + 4));
     }
 
     @Test
@@ -72,7 +72,7 @@ class ATMImplTest {
     void getSummHaveNoNeededNominal() {
         atm.putSumm(BillFactory.createBillList(3, BillNominal.NOMINAL_1000));
         atm.putSumm(BillFactory.createBillList(4, BillNominal.NOMINAL_100));
-        assertThrows(IllegalArgumentException.class, () -> atm.getSumm(TEST_SUMM_VALUE));
+        assertThrows(AtmException.class, () -> atm.getSumm(TEST_SUMM_VALUE));
     }
 
     @Test

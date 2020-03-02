@@ -4,58 +4,67 @@ import ru.chupaYchups.atm.bill.Bill;
 import ru.chupaYchups.atm.bill.BillNominal;
 import ru.chupaYchups.atm.cell.ATMCell;
 import ru.chupaYchups.atm.cell.ATMCellImpl;
-import ru.chupaYchups.atm.cell.operation.AtmCellGroupCommand;
-import ru.chupaYchups.atm.cell.operation.InspectCellsForMoneyCommand;
-
+import ru.chupaYchups.atm.cell.operation.AtmCellChainCommand;
+import ru.chupaYchups.atm.cell.operation.DistributeBillsCommand;
+import ru.chupaYchups.atm.cell.operation.GetBalanceCommand;
+import ru.chupaYchups.atm.cell.operation.InspectForSummCommand;
+import ru.chupaYchups.atm.exception.AtmException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ATMImpl implements ATM {
 
     private NavigableMap<BillNominal, ATMCell> cellByNominalMap;
 
-    private List<BillNominal> nominals;
-
     ATMImpl(final List<BillNominal> nominals) {
         if (nominals.isEmpty()) {
-            throw new IllegalArgumentException("list of nominals cannot be empty");
+            throw new AtmException("List of nominals cannot be empty");
         }
-        this.nominals = nominals;
         cellByNominalMap = new TreeMap<>(Comparator.<BillNominal>comparingInt(b -> b.getNominal()).reversed());
-        nominals.forEach(billNominal -> {cellByNominalMap.put(billNominal, new ATMCellImpl(billNominal));});
+        nominals.forEach(billNominal -> {
+            ATMCellImpl cell = new ATMCellImpl(billNominal);
+            cell.setCellByNominalMap(cellByNominalMap);
+            cellByNominalMap.put(billNominal, cell);
+        });
     }
 
     @Override
     public List<Bill> getSumm(final int summ) {
         if (summ > getBalance() || (summ % cellByNominalMap.lastKey().getNominal() != 0)) {
-            throw new IllegalArgumentException("Cannot get such summ : " + summ);
+            throw new AtmException("Cannot get such summ : " + summ);
         }
-        List<Bill> billList = new ArrayList<>();
-        AtmCellGroupCommand inspectCellsForMoneyCommand = new InspectCellsForMoneyCommand(summ);
-        Iterator<Map.Entry<BillNominal, ATMCell>> iterator = cellByNominalMap.entrySet().iterator();
-        while (!inspectCellsForMoneyCommand.isFinished() && iterator.hasNext()) {
-            inspectCellsForMoneyCommand.execute(iterator.next().getValue());
-        }
+
+        AtmCellChainCommand inspectCellsForMoneyCommand = new InspectForSummCommand(summ);
+        //запускаем чейн
+        cellByNominalMap.firstEntry().getValue().process(inspectCellsForMoneyCommand);
+
         if (!inspectCellsForMoneyCommand.isFinished()) {
-            throw new IllegalArgumentException("Summ cannot be returned : " + summ);
+            throw new AtmException("Summ cannot be returned : " + summ);
         }
+
         Map<ATMCell, Integer> result = (Map<ATMCell, Integer>) inspectCellsForMoneyCommand.getResult();
-        result.forEach((atmCell, i) -> {
-            billList.addAll(atmCell.getBills(i));
-        });
+        List<Bill> billList = result.
+            entrySet().
+            stream().
+            map(entry -> entry.getKey().getBills(entry.getValue())).
+            flatMap(bills -> bills.stream()).collect(Collectors.toList());
+
         return billList;
     }
 
     @Override
     public void putSumm(List<Bill> billList) {
-        billList.forEach(bill -> cellByNominalMap.get(bill.getNominal()).putBill(bill));
+        AtmCellChainCommand command = new DistributeBillsCommand(billList);
+        cellByNominalMap.firstEntry().getValue().process(command);
+        if (!command.isFinished()) {
+            throw new AtmException("Cannot put bills in ATM, invalid nominals");
+        }
     }
 
     @Override
     public int getBalance() {
-        return cellByNominalMap.
-            entrySet().
-            stream().
-            mapToInt(entry -> entry.getValue().getBalance()).
-            sum();
+        AtmCellChainCommand command = new GetBalanceCommand();
+        cellByNominalMap.firstEntry().getValue().process(command);
+        return command.getResult().entrySet().stream().collect(Collectors.summingInt(Map.Entry::getValue));
     }
 }
