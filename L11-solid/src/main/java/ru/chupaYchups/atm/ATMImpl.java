@@ -26,7 +26,7 @@ public class ATMImpl implements ATM {
 
     @Override
     public List<Bill> getSumm(final int summ) {
-        if (summ > getBalance() && (summ % cellByNominalMap.lastKey().getNominal() != 0)) {
+        if (summ > getBalance() || (summ % cellByNominalMap.lastKey().getNominal() != 0)) {
             throw new IllegalArgumentException("Cannot get such summ : " + summ);
         }
         List<Bill> billList = new ArrayList<>();

@@ -2,7 +2,6 @@ package ru.chupaYchups.atm.cell;
 
 import ru.chupaYchups.atm.bill.Bill;
 import ru.chupaYchups.atm.bill.BillNominal;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,19 +19,18 @@ public class ATMCellImpl implements ATMCell {
 
     @Override
     public List<Bill> getBills(int quantity) {
+        List<Bill> returnList = null;
         int availableQty = billList.size() - quantity;
-        return Collections.unmodifiableList(billList.subList(0, billList.size() - availableQty));
+        if (availableQty > 0) {
+            returnList = billList.subList(0, billList.size() - availableQty);
+        }
+        return Collections.unmodifiableList(returnList != null ? returnList : Collections.emptyList());
     }
 
     @Override
     public void putBill(Bill bill) {
         billList.add(bill);
     }
-
-//    @Override
-//    public int getAvailableBillQty(int qty) {
-//        return billList.size();
-//    }
 
     @Override
     public BillNominal getNominal() {
@@ -41,7 +39,10 @@ public class ATMCellImpl implements ATMCell {
 
     @Override
     public int getHowMuchHave(int qty) {
-        return billList.size() >= qty ? qty : qty - billList.size();
+        if (billList.isEmpty()) {
+            return 0;
+        }
+        return billList.size() < qty ?  billList.size() : qty;
     }
 
     @Override

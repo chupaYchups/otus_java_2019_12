@@ -17,9 +17,11 @@ public class InspectCellsForMoneyCommand implements AtmCellGroupCommand {
     public void execute(ATMCell cell) {
         int cellNominal = cell.getNominal().getNominal();
         int qtyToRequest = summToGet / cellNominal;
-        int howMuchHave = cell.getHowMuchHave(qtyToRequest);
-        resultMap.put(cell, howMuchHave);
-        summToGet -= cellNominal * howMuchHave;
+        if (qtyToRequest > 0) {
+            int howMuchHave = cell.getHowMuchHave(qtyToRequest);
+            resultMap.put(cell, howMuchHave);
+            summToGet -= cellNominal * howMuchHave;
+        }
     }
 
     @Override
