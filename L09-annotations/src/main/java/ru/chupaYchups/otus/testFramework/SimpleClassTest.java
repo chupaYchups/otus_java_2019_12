@@ -1,4 +1,4 @@
-package ru.chupaYchups.otus.testFramework.test;
+package ru.chupaYchups.otus.testFramework;
 
 import ru.chupaYchups.otus.testFramework.annotations.AfterEach;
 import ru.chupaYchups.otus.testFramework.annotations.BeforeEach;
@@ -19,6 +19,7 @@ public class SimpleClassTest {
     @Test
     public void testAdd() {
         System.out.println("----SimpleClassTest.testAdd");
+        throw new RuntimeException();
     }
 
     @Test

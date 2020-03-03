@@ -19,11 +19,21 @@ public class MyTestFramework {
             throw new IllegalArgumentException("Have no such test class : " + className);
         }
         TestRunner runner = new TestRunner(testClass);
-        try {
-            runner.run();
-        } catch (ReflectiveOperationException exc) {
+        TestRunner.RunResult result;
+        result = runner.run();
+        logTestResults(result);
+    }
+
+    private static void logTestResults(TestRunner.RunResult result) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("==================================Statistics====================================").append(System.lineSeparator());
+        stringBuilder.append("Test runned : " + result.getRunTestCounter()).append(System.lineSeparator());
+        stringBuilder.append("Successfully runned : " + result.getSuccessful()).append(System.lineSeparator());
+        stringBuilder.append("Failed tests : " + result.getFailed());
+        System.out.println(stringBuilder.toString());
+        result.getErrorInfo().forEach((methodName, exc) -> {
+            System.out.println("Failed method - " + methodName + ", stackTrace : ");
             exc.printStackTrace();
-            throw new RuntimeException("Test running failed with exception : " + exc.toString());
-        }
+        });
     }
 }
