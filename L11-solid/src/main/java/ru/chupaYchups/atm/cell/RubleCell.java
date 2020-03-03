@@ -7,15 +7,15 @@ import ru.chupaYchups.atm.cell.operation.AtmCellChainCommand;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
-public class ATMCellImpl implements ATMCell {
+public class RubleCell implements AtmCell {
 
     private List<Bill> billList;
 
     private BillNominal nominal;
 
-    private WeakReference<NavigableMap<BillNominal, ATMCell>> cellByNominalMap;
+    private WeakReference<NavigableMap<BillNominal, AtmCell>> cellByNominalMap;
 
-    public ATMCellImpl(BillNominal nominal) {
+    public RubleCell(BillNominal nominal) {
         billList = new ArrayList<>();
         this.nominal = nominal;
     }
@@ -31,12 +31,7 @@ public class ATMCellImpl implements ATMCell {
     }
 
     @Override
-    public void putBill(Bill bill) {
-        billList.add(bill);
-    }
-
-    @Override
-    public void putBillList(List<Bill> billList) {
+    public void putBills(List<Bill> billList) {
         this.billList.addAll(billList);
     }
 
@@ -60,7 +55,7 @@ public class ATMCellImpl implements ATMCell {
 
     @Override
     public AtmCellCommandExecutor getNext() {
-        Map.Entry<BillNominal, ATMCell> entry = cellByNominalMap.get().higherEntry(getNominal());
+        Map.Entry<BillNominal, AtmCell> entry = cellByNominalMap.get().higherEntry(getNominal());
         return entry != null ? entry.getValue() : null;
     }
 
@@ -69,7 +64,7 @@ public class ATMCellImpl implements ATMCell {
         command.execute(this);
     }
 
-    public void setCellByNominalMap(NavigableMap<BillNominal, ATMCell> cellByNominalMap) {
-        this.cellByNominalMap = new WeakReference<NavigableMap<BillNominal, ATMCell>>(cellByNominalMap);
+    public void setCellByNominalMap(NavigableMap<BillNominal, AtmCell> cellByNominalMap) {
+        this.cellByNominalMap = new WeakReference(cellByNominalMap);
     }
 }

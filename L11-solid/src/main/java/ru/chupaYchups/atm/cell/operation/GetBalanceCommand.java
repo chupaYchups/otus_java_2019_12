@@ -1,16 +1,16 @@
 package ru.chupaYchups.atm.cell.operation;
 
-import ru.chupaYchups.atm.cell.ATMCell;
+import ru.chupaYchups.atm.cell.AtmCell;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class GetBalanceCommand implements AtmCellChainCommand {
 
-    private Map<ATMCell, Integer> resultMap = new HashMap<>();
+    private Map<AtmCell, Integer> resultMap = new HashMap<>();
 
     @Override
-    public Map<ATMCell, Integer> getResult() {
+    public Map<AtmCell, Integer> getResult() {
         return resultMap;
     }
 
@@ -20,7 +20,7 @@ public class GetBalanceCommand implements AtmCellChainCommand {
     }
 
     @Override
-    public void execute(ATMCell cell) {
+    public void execute(AtmCell cell) {
         resultMap.put(cell, cell.getBalance());
     }
 }

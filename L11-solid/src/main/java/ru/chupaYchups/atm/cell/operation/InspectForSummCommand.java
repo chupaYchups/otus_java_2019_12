@@ -1,20 +1,20 @@
 package ru.chupaYchups.atm.cell.operation;
 
-import ru.chupaYchups.atm.cell.ATMCell;
+import ru.chupaYchups.atm.cell.AtmCell;
 import java.util.HashMap;
 import java.util.Map;
 
 public class InspectForSummCommand implements AtmCellChainCommand {
 
     private int summToGet;
-    private Map<ATMCell, Integer> resultMap = new HashMap<>();
+    private Map<AtmCell, Integer> resultMap = new HashMap<>();
 
     public InspectForSummCommand(int summToGet) {
         this.summToGet = summToGet;
     }
 
     @Override
-    public void execute(ATMCell cell) {
+    public void execute(AtmCell cell) {
         int cellNominal = cell.getNominal().getNominal();
         int qtyToRequest = summToGet / cellNominal;
         if (qtyToRequest > 0) {
@@ -30,7 +30,7 @@ public class InspectForSummCommand implements AtmCellChainCommand {
     }
 
     @Override
-    public Map<ATMCell, Integer> getResult() {
+    public Map<AtmCell, Integer> getResult() {
         return resultMap;
     }
 }

@@ -16,8 +16,4 @@ public enum BillNominal {
     public int getNominal() {
         return nominal;
     }
-
-    public static int getMinimalNominal() {
-        return NOMINAL_50.getNominal();
-    }
 }

@@ -4,15 +4,15 @@ import ru.chupaYchups.atm.bill.BillNominal;
 
 import java.util.List;
 
-public class ATMFactory {
+public class AtmFactory {
 
     private List<BillNominal> nominalList;
 
-    public ATMFactory(List<BillNominal> billNominalList) {
+    public AtmFactory(List<BillNominal> billNominalList) {
         this.nominalList = billNominalList;
     }
 
-    public ATM createATM() {
-        return new ATMImpl(nominalList);
+    public Atm createATM() {
+        return new OldModelAtm(nominalList);
     }
 }

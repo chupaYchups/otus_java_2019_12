@@ -2,8 +2,8 @@ package ru.chupaYchups.atm;
 
 import ru.chupaYchups.atm.bill.Bill;
 import ru.chupaYchups.atm.bill.BillNominal;
-import ru.chupaYchups.atm.cell.ATMCell;
-import ru.chupaYchups.atm.cell.ATMCellImpl;
+import ru.chupaYchups.atm.cell.AtmCell;
+import ru.chupaYchups.atm.cell.RubleCell;
 import ru.chupaYchups.atm.cell.operation.AtmCellChainCommand;
 import ru.chupaYchups.atm.cell.operation.DistributeBillsCommand;
 import ru.chupaYchups.atm.cell.operation.GetBalanceCommand;
@@ -12,17 +12,17 @@ import ru.chupaYchups.atm.exception.AtmException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ATMImpl implements ATM {
+public class OldModelAtm implements Atm {
 
-    private NavigableMap<BillNominal, ATMCell> cellByNominalMap;
+    private NavigableMap<BillNominal, AtmCell> cellByNominalMap;
 
-    ATMImpl(final List<BillNominal> nominals) {
+    OldModelAtm(final List<BillNominal> nominals) {
         if (nominals.isEmpty()) {
             throw new AtmException("List of nominals cannot be empty");
         }
         cellByNominalMap = new TreeMap<>(Comparator.<BillNominal>comparingInt(b -> b.getNominal()).reversed());
         nominals.forEach(billNominal -> {
-            ATMCellImpl cell = new ATMCellImpl(billNominal);
+            RubleCell cell = new RubleCell(billNominal);
             cell.setCellByNominalMap(cellByNominalMap);
             cellByNominalMap.put(billNominal, cell);
         });
@@ -42,7 +42,7 @@ public class ATMImpl implements ATM {
             throw new AtmException("Summ cannot be returned : " + summ);
         }
 
-        Map<ATMCell, Integer> result = (Map<ATMCell, Integer>) inspectCellsForMoneyCommand.getResult();
+        Map<AtmCell, Integer> result = inspectCellsForMoneyCommand.getResult();
         List<Bill> billList = result.
             entrySet().
             stream().

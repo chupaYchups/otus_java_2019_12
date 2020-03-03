@@ -16,14 +16,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DisplayName("Тест проверяющий что банкомат")
 class ATMImplTest {
 
-    private static  ATMFactory atmFactory;
-    private ATM atm;
+    private static AtmFactory atmFactory;
+    private Atm atm;
 
     private final int TEST_SUMM_VALUE = 2150;
 
     @BeforeAll
     static void beforeAll() {
-        atmFactory = new ATMFactory(List.of(BillNominal.values()));
+        atmFactory = new AtmFactory(List.of(BillNominal.values()));
     }
 
     @BeforeEach
@@ -44,10 +44,9 @@ class ATMImplTest {
         Assertions.assertThat(billList).
             hasSize(4).
             extracting("nominal").
-            containsExactlyInAnyOrder(BillNominal.NOMINAL_100,
-                                        BillNominal.NOMINAL_1000,
-                                        BillNominal.NOMINAL_1000,
-                                        BillNominal.NOMINAL_50);
+            containsExactly(BillNominal.NOMINAL_1000, BillNominal.NOMINAL_1000,
+                BillNominal.NOMINAL_100,
+                BillNominal.NOMINAL_50);
     }
 
     @Test

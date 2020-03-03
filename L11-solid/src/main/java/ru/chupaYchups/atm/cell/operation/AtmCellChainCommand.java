@@ -1,9 +1,9 @@
 package ru.chupaYchups.atm.cell.operation;
 
-import ru.chupaYchups.atm.cell.ATMCell;
+import ru.chupaYchups.atm.cell.AtmCell;
 import java.util.Map;
 
 public interface AtmCellChainCommand extends AtmCellCommand{
-    Map<ATMCell, Integer> getResult();
+    Map<AtmCell, Integer> getResult();
     boolean isFinished();
 }
