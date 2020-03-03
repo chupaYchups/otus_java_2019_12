@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("Тест проверяющий что банкомат")
-class ATMImplTest {
+class OldModelAtmTest {
 
     private static AtmFactory atmFactory;
     private Atm atm;
@@ -33,9 +33,8 @@ class ATMImplTest {
 
     @Test
     @DisplayName("Корректно отрабатывает запрос денежной суммы, возвращает минимальный количеством купюр")
-    void getSummSucess() {
+    void getSummSuccess() {
         atm.putSumm(BillFactory.createBillList(3, BillNominal.NOMINAL_1000));
-        atm.putSumm(BillFactory.createBillList(3, BillNominal.NOMINAL_500));
         atm.putSumm(BillFactory.createBillList(3, BillNominal.NOMINAL_100));
         atm.putSumm(BillFactory.createBillList(3, BillNominal.NOMINAL_50));
 
@@ -44,9 +43,9 @@ class ATMImplTest {
         Assertions.assertThat(billList).
             hasSize(4).
             extracting("nominal").
-            containsExactly(BillNominal.NOMINAL_1000, BillNominal.NOMINAL_1000,
-                BillNominal.NOMINAL_100,
-                BillNominal.NOMINAL_50);
+            containsExactlyInAnyOrder(BillNominal.NOMINAL_50, BillNominal.NOMINAL_1000, BillNominal.NOMINAL_1000,
+                BillNominal.NOMINAL_100
+                );
     }
 
     @Test
@@ -76,7 +75,7 @@ class ATMImplTest {
 
     @Test
     @DisplayName("Корректно возвращает значение общего баланса банкомата. Остаток денег. ")
-    void getBalance() {
+    void getBalanceSuccess() {
         atm.putSumm(BillFactory.createBillList(1, BillNominal.NOMINAL_1000));
         atm.putSumm(BillFactory.createBillList(2, BillNominal.NOMINAL_500));
         atm.putSumm(BillFactory.createBillList(1, BillNominal.NOMINAL_100));

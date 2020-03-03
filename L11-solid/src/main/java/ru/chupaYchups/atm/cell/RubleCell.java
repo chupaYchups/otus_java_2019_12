@@ -2,7 +2,7 @@ package ru.chupaYchups.atm.cell;
 
 import ru.chupaYchups.atm.bill.Bill;
 import ru.chupaYchups.atm.bill.BillNominal;
-import ru.chupaYchups.atm.cell.operation.AtmCellChainCommand;
+import ru.chupaYchups.atm.cell.command.AtmCellChainCommand;
 
 import java.lang.ref.WeakReference;
 import java.util.*;

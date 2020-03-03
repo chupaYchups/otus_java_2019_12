@@ -1,6 +1,6 @@
 package ru.chupaYchups.atm.cell;
 
-import ru.chupaYchups.atm.cell.operation.AtmCellChainCommand;
+import ru.chupaYchups.atm.cell.command.AtmCellChainCommand;
 
 interface AtmCellCommandExecutor {
 

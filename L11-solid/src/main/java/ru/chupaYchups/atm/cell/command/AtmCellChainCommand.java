@@ -1,4 +1,4 @@
-package ru.chupaYchups.atm.cell.operation;
+package ru.chupaYchups.atm.cell.command;
 
 import ru.chupaYchups.atm.cell.AtmCell;
 import java.util.Map;
