@@ -54,15 +54,16 @@ public class CompareGarbageCollection {
         statistic.put(GenerationType.YOUNG, new GarbageCollectionStat());
         switchOnMonitoring(statistic);
         MemoryTerror terror = new MemoryTerror();
-        long startTime = System.currentTimeMillis();
-        try {
-            terror.start();
-        }
-        finally {
-            Thread.sleep(5000);
-            System.out.print("Work time : " +  (System.currentTimeMillis() - startTime) + ", quantity of added objects : " + terror.getAddingElementsCounter());
-            statistic.forEach((generationType, garbageCollectionStat) -> System.out.print(", " + generationType.name() + " : (buildCount = " + garbageCollectionStat.getBuildCounter() +", duration = " + garbageCollectionStat.getDuration() + ")"));
-        }
+//        long startTime = System.currentTimeMillis();
+//        StringBuilder sb = new StringBuilder(200);
+//        try {
+        terror.start();
+//        } finally {
+//            System.out.println(sb.append(System.currentTimeMillis() - startTime).toString());
+//            //sb.append("Work time : ").append(System.currentTimeMillis() - startTime).append(", quantity of added objects : ").append(terror.getAddingElementsCounter());
+//            //statistic.forEach((generationType, garbageCollectionStat) -> sb.append(", ").append(generationType.name()).append(" : (buildCount = ").append(garbageCollectionStat.getBuildCounter()).append(", duration = ").append(garbageCollectionStat.getDuration()).append(")"));
+//            //System.out.println(sb.toString());
+//        }
     }
 
     private static void switchOnMonitoring(final Map<GenerationType, GarbageCollectionStat> statistic) {
@@ -80,7 +81,7 @@ public class CompareGarbageCollection {
                     long duration = info.getGcInfo().getDuration();
                     GarbageCollectionStat stat = statistic.get(GenerationType.getByLogString(gcAction));
                     stat.addToStat(duration);
-                    System.out.println( "start:" + startTime + " Name:" + gcName + ", action:" + gcAction + ", gcCause:" + gcCause + "(" + duration + " ms)" );
+                    System.out.println( "start:" + startTime + " Name:" + gcName + ", action:" + gcAction + ", gcCause:" + gcCause + "(" + duration + " ms)");
                 }
             };
             emitter.addNotificationListener(listener, null, null);
