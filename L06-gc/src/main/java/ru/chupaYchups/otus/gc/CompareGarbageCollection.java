@@ -1,8 +1,8 @@
 package ru.chupaYchups.otus.gc;
 
 import com.sun.management.GarbageCollectionNotificationInfo;
-import javax.management.NotificationEmitter;
-import javax.management.NotificationListener;
+
+import javax.management.*;
 import javax.management.openmbean.CompositeData;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
@@ -37,33 +37,23 @@ public class CompareGarbageCollection {
         private int buildCounter;
         public long getDuration() {
             return duration;
-        }
+    }
         public int getBuildCounter() {
-            return buildCounter;
-        }
+        return buildCounter;
+    }
         public void addToStat(long duration) {
             buildCounter++;
             this.duration += duration;
         }
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         System.out.println("Starting pid : " + ManagementFactory.getRuntimeMXBean().getName() );
         Map<GenerationType, GarbageCollectionStat> statistic = new HashMap<>();
         statistic.put(GenerationType.OLD, new GarbageCollectionStat());
         statistic.put(GenerationType.YOUNG, new GarbageCollectionStat());
         switchOnMonitoring(statistic);
-        MemoryTerror terror = new MemoryTerror();
-//        long startTime = System.currentTimeMillis();
-//        StringBuilder sb = new StringBuilder(200);
-//        try {
-        terror.start();
-//        } finally {
-//            System.out.println(sb.append(System.currentTimeMillis() - startTime).toString());
-//            //sb.append("Work time : ").append(System.currentTimeMillis() - startTime).append(", quantity of added objects : ").append(terror.getAddingElementsCounter());
-//            //statistic.forEach((generationType, garbageCollectionStat) -> sb.append(", ").append(generationType.name()).append(" : (buildCount = ").append(garbageCollectionStat.getBuildCounter()).append(", duration = ").append(garbageCollectionStat.getDuration()).append(")"));
-//            //System.out.println(sb.toString());
-//        }
+        new MemoryTerror().run();
     }
 
     private static void switchOnMonitoring(final Map<GenerationType, GarbageCollectionStat> statistic) {
@@ -74,14 +64,12 @@ public class CompareGarbageCollection {
             NotificationListener listener = (notification, o) -> {
                 if (notification.getType().equals(GarbageCollectionNotificationInfo.GARBAGE_COLLECTION_NOTIFICATION)) {
                     GarbageCollectionNotificationInfo info = GarbageCollectionNotificationInfo.from((CompositeData) notification.getUserData());
-                    String gcName = info.getGcName();
                     String gcAction = info.getGcAction();
-                    String gcCause = info.getGcCause();
-                    long startTime = info.getGcInfo().getStartTime();
                     long duration = info.getGcInfo().getDuration();
                     GarbageCollectionStat stat = statistic.get(GenerationType.getByLogString(gcAction));
                     stat.addToStat(duration);
-                    System.out.println( "start:" + startTime + " Name:" + gcName + ", action:" + gcAction + ", gcCause:" + gcCause + "(" + duration + " ms)");
+                    System.out.println( "Start:" + info.getGcInfo().getStartTime() + " Name:" + info.getGcName() +
+                        ", action:" + gcAction + ", gcCause:" + info.getGcCause() + "(" + duration + " ms)");
                 }
             };
             emitter.addNotificationListener(listener, null, null);
