@@ -9,6 +9,7 @@ import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class CompareGarbageCollection {
 
@@ -47,16 +48,17 @@ public class CompareGarbageCollection {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         System.out.println("Starting pid : " + ManagementFactory.getRuntimeMXBean().getName() );
         Map<GenerationType, GarbageCollectionStat> statistic = new HashMap<>();
         statistic.put(GenerationType.OLD, new GarbageCollectionStat());
         statistic.put(GenerationType.YOUNG, new GarbageCollectionStat());
-        switchOnMonitoring(statistic);
-        new MemoryTerror().run();
+        MemoryTerror terror = new MemoryTerror();
+        switchOnMonitoring(statistic, terror);
+        terror.run();
     }
 
-    private static void switchOnMonitoring(final Map<GenerationType, GarbageCollectionStat> statistic) {
+    private static void switchOnMonitoring(final Map<GenerationType, GarbageCollectionStat> statistic, MemoryTerror terror) {
         List<GarbageCollectorMXBean> gcMbeans = ManagementFactory.getGarbageCollectorMXBeans();
         gcMbeans.forEach(gcMbean -> {
             System.out.println("GC name:" +  gcMbean.getName());
@@ -69,7 +71,8 @@ public class CompareGarbageCollection {
                     GarbageCollectionStat stat = statistic.get(GenerationType.getByLogString(gcAction));
                     stat.addToStat(duration);
                     System.out.println( "Start:" + info.getGcInfo().getStartTime() + " Name:" + info.getGcName() +
-                        ", action:" + gcAction + ", gcCause:" + info.getGcCause() + "(" + duration + " ms)");
+                            ", action:" + gcAction + ", gcCause:" + info.getGcCause() + "(" + duration + " ms)");
+                    System.out.println( "Total created elements: " + terror.getAddingElementsCounter() + ", total gc builds duration : " + statistic.values().stream().collect(Collectors.summarizingLong(st -> st.getDuration())).getSum()) ;
                 }
             };
             emitter.addNotificationListener(listener, null, null);

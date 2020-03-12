@@ -4,18 +4,18 @@ import java.util.Arrays;
 
 public class MemoryTerror {
 
+    public static final int PAUSE_TO_HELP_COLLECTOR = 10000;
     private long addingElementsCounter;
     private String[] stringArray = new String[10];
 
-    public void run() {
+    public void run() throws InterruptedException {
         while (true) {
             int oldSize = stringArray.length;
-            stringArray = Arrays.copyOf(stringArray, 3 * oldSize);
+            stringArray = Arrays.copyOf(stringArray, 2 * oldSize);
             for (int i = 0; i < stringArray.length; i++) {
-                String newObj = Long.toString(++addingElementsCounter);
-                System.out.println(newObj);
-                stringArray[i] = newObj;
+                stringArray[i] = Long.toString(++addingElementsCounter);
             }
+            Thread.sleep(PAUSE_TO_HELP_COLLECTOR);
         }
     }
 
