@@ -14,6 +14,7 @@
         <module>L03-generic-collections</module>
         <module>L06-gc</module>
         <module>L09-annotations</module>
+        <module>L11-solid</module>
     </modules>
 
     <developers>
