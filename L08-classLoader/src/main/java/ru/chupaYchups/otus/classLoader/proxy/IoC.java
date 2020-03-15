@@ -10,6 +10,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class IoC {
@@ -23,7 +24,7 @@ public class IoC {
 
         private ITestLogging testLoggingImpl;
 
-        private List<String> logMethodNames = new ArrayList<>();
+        private List<Method> methodsToLog = new ArrayList<>();
 
         public MyInvocationHandler(Class<? extends Annotation> annotationClass, ITestLogging testLoggingImpl) {
             this.testLoggingImpl = testLoggingImpl;
@@ -31,17 +32,26 @@ public class IoC {
         }
 
         private void collectLoggingMethods(Class<? extends Annotation> annotationClass, ITestLogging testLoggingImpl) {
-            Method[] methods = testLoggingImpl.getClass().getMethods();
-            for (Method method : methods) {
-                if (method.isAnnotationPresent(annotationClass)) {
-                    logMethodNames.add(method.getName());
-                }
-            }
+            Class implementationClass = testLoggingImpl.getClass();
+            Arrays.stream(implementationClass.getMethods()).
+                filter(method -> method.isAnnotationPresent(annotationClass)).
+                forEach(method -> {
+                    Arrays.stream(implementationClass.getInterfaces()).forEach(interfaceClass -> {
+                        Method interfaceMethod = null;
+                        try {
+                            interfaceMethod = interfaceClass.getMethod(method.getName(), method.getParameterTypes());
+                        } catch (NoSuchMethodException e) {
+                        }
+                        if (interfaceMethod != null) {
+                            methodsToLog.add(interfaceMethod);
+                        }
+                    });
+                });
         }
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] objects) throws Throwable {
-            if (logMethodNames.contains(method.getName())) {
+            if (methodsToLog.contains(method)) {
                 System.out.println("executed method: " + method.getName() + ", param: " + objects[0]);
             }
             return method.invoke(testLoggingImpl, objects);

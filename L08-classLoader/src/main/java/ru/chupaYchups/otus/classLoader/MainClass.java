@@ -6,5 +6,7 @@ public class MainClass {
         ITestLogging testLogging = IoC.createLoggingProxy();
         testLogging.calculation(6);
         testLogging.calculationNotLogging(6);
+        testLogging.calculation("Hello guys!!!");
+        testLogging.calculation("Hello", 2);
     }
 }

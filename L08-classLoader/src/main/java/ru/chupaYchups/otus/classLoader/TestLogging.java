@@ -12,4 +12,12 @@ public class TestLogging implements ITestLogging {
     @Override
     public void calculationNotLogging(int param) {
     }
+
+    @Override
+    public void calculation(String param) {
+    }
+
+    @Override
+    public void calculation(String param1, int param2) {
+    }
 }
