@@ -9,9 +9,10 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 public class IoC {
 
@@ -22,31 +23,29 @@ public class IoC {
 
     private static class MyInvocationHandler implements InvocationHandler {
 
-        private ITestLogging testLoggingImpl;
+        private final ITestLogging testLoggingImpl;
 
-        private List<Method> methodsToLog = new ArrayList<>();
+        private final List<Method> methodsToLog;
 
         public MyInvocationHandler(Class<? extends Annotation> annotationClass, ITestLogging testLoggingImpl) {
             this.testLoggingImpl = testLoggingImpl;
-            collectLoggingMethods(annotationClass, testLoggingImpl);
+            methodsToLog = collectLoggingMethods(annotationClass, testLoggingImpl);
         }
 
-        private void collectLoggingMethods(Class<? extends Annotation> annotationClass, ITestLogging testLoggingImpl) {
+        private List<Method> collectLoggingMethods(Class<? extends Annotation> annotationClass, ITestLogging testLoggingImpl) {
             Class implementationClass = testLoggingImpl.getClass();
-            Arrays.stream(implementationClass.getMethods()).
-                filter(method -> method.isAnnotationPresent(annotationClass)).
-                forEach(method -> {
-                    Arrays.stream(implementationClass.getInterfaces()).forEach(interfaceClass -> {
-                        Method interfaceMethod = null;
-                        try {
-                            interfaceMethod = interfaceClass.getMethod(method.getName(), method.getParameterTypes());
-                        } catch (NoSuchMethodException e) {
-                        }
-                        if (interfaceMethod != null) {
-                            methodsToLog.add(interfaceMethod);
-                        }
-                    });
-                });
+            UnaryOperator<Method> findMethodInInterfaces = method -> {
+                for (Class interfaceClass : implementationClass.getInterfaces()) {
+                    try {
+                        return interfaceClass.getMethod(method.getName(), method.getParameterTypes());
+                    } catch (NoSuchMethodException e) {
+                    }
+                }
+                return null;
+            };
+            return Arrays.stream(implementationClass.getMethods()).
+                    filter(method -> method.isAnnotationPresent(annotationClass)).
+                    map(findMethodInInterfaces).collect(Collectors.toList());
         }
 
         @Override
