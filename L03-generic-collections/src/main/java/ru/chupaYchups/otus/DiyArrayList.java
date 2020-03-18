@@ -1,4 +1,4 @@
-package ru.chupaYchups.otus.gc;
+package ru.chupaYchups.otus;
 
 import java.util.*;
 

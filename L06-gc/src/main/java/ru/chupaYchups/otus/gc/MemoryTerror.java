@@ -1,38 +1,25 @@
 package ru.chupaYchups.otus.gc;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 public class MemoryTerror {
 
-    public static final int ELEMENT_VALUE = 7;
-    private int addingElementsCounter;
+    public static final int PAUSE_TO_HELP_COLLECTOR = 10000;
+    private long addingElementsCounter;
+    private String[] stringArray = new String[10];
 
-    private List<Integer> intList = new ArrayList<>();
-
-    public void start() throws InterruptedException {
+    public void run() throws InterruptedException {
         while (true) {
-            int size = intList.size();
-            if (size > 1) {
-                int elementToDelCount = Math.round(size / 2);
-                List subList = intList.subList(0, elementToDelCount - 1);
-                subList.clear();
-                for (int i = 0; i < 2 * elementToDelCount; i++) {
-                    addElement();
-                }
-            } else {
-                addElement();
+            int oldSize = stringArray.length;
+            stringArray = Arrays.copyOf(stringArray, 2 * oldSize);
+            for (int i = 0; i < stringArray.length; i++) {
+                stringArray[i] = Long.toString(++addingElementsCounter);
             }
-            Thread.sleep(7000);
+            Thread.sleep(PAUSE_TO_HELP_COLLECTOR);
         }
     }
 
-    private void addElement() {
-        intList.add(ELEMENT_VALUE);
-        addingElementsCounter++;
-    }
-
-    public int getAddingElementsCounter() {
+    public long getAddingElementsCounter() {
         return addingElementsCounter;
     }
 }

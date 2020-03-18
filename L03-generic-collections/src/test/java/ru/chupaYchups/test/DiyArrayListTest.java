@@ -2,7 +2,7 @@ package ru.chupaYchups.test;
 
 import org.junit.Assert;
 import org.junit.Test;
-import ru.chupaYchups.otus.gc.DiyArrayList;
+import ru.chupaYchups.otus.DiyArrayList;
 
 import java.util.*;
 
