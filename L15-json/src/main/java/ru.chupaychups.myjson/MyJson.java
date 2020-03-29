@@ -7,6 +7,9 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
+//TODO Проверить на нуллы и подумать, какой шаблон проектирования можно ещё сюды впилить
+
 public class MyJson {
 
     private Map<Class, MyAdapter> typeAdapterMap;
@@ -46,37 +49,34 @@ public class MyJson {
         return structure;
     }
 
+    private void processObject(Object object, JsonArrayBuilder arrayBuilder) {
+        var adapter = typeAdapterMap.get(object.getClass());
+        if (adapter != null) {
+            arrayBuilder.add(adapter.apply(object));
+        } else {
+            arrayBuilder.add(processCustomObject(object));
+        }
+    }
+
     private JsonArrayBuilder processArray(Object arrayObject) {
         int arrayLength = Array.getLength(arrayObject);
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
         for (int i = 0; i < arrayLength; i++) {
             Object element = Array.get(arrayObject, i);
-            var adapter = typeAdapterMap.get(element.getClass());
-            if (adapter != null) {
-                arrayBuilder.add(adapter.apply(element));
-            } else {
-                arrayBuilder.add(processCustomObject(element));
-            }
+            processObject(element, arrayBuilder);
         }
         return arrayBuilder;
     }
 
     private JsonArrayBuilder processCollection(Object collectionObj) {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        ((Collection) collectionObj).forEach(o -> {
-            var adapter = typeAdapterMap.get(o.getClass());
-            if (adapter != null) {
-                arrayBuilder.add(adapter.apply(o));
-            } else {
-                arrayBuilder.add(processCustomObject(o).build());
-            }
-        });
+        ((Collection) collectionObj).forEach(o -> processObject(o, arrayBuilder));
         return arrayBuilder;
     }
 
     private JsonObjectBuilder processCustomObject(Object object) {
-        Class objClass = object.getClass();
         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+        Class objClass = object.getClass();
         return processObjectFields(object, objectBuilder, objClass);
     }
 
