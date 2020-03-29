@@ -6,9 +6,12 @@ public class TestJsonClass {
 
     private Integer field2Integer;
 
-    public TestJsonClass(String field1String, Integer field2Integer) {
+    private int[] intArray;
+
+    public TestJsonClass(String field1String, Integer field2Integer, int[] intArray) {
         this.field1String = field1String;
         this.field2Integer = field2Integer;
+        this.intArray = intArray;
     }
 
     public String getField1String() {
@@ -25,5 +28,13 @@ public class TestJsonClass {
 
     public void setField2Integer(Integer field2Integer) {
         this.field2Integer = field2Integer;
+    }
+
+    public int[] getIntArray() {
+        return intArray;
+    }
+
+    public void setIntArray(int[] intArray) {
+        this.intArray = intArray;
     }
 }

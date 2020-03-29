@@ -3,8 +3,6 @@ package ru.chupaychups.myjson;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import com.google.gson.Gson;
-
-import java.lang.reflect.Array;
 import java.util.List;
 
 class MyJsonTest {
@@ -33,6 +31,14 @@ class MyJsonTest {
         Assertions.assertEquals(myJson.toJson(myIntPrimitiveArray), gson.toJson(myIntPrimitiveArray));
     }
 
+    @Test
+    void primitiveToJsonTest() {
+        int myInt = 1;
+        Gson gson = new Gson();
+        MyJson myJson = new MyJson();
+        Assertions.assertEquals(myJson.toJson(myInt), gson.toJson(myInt));
+    }
+
 
     @Test
     void objectArrayToJsonTest() {
@@ -47,7 +53,8 @@ class MyJsonTest {
 
     @Test
     void myObjectToJsonTest() {
-        TestJsonClass testJsonClass = new TestJsonClass("123123", 3);
+        int[] intArray = new int[]{1,  2,  3};
+        TestJsonClass testJsonClass = new TestJsonClass("123123", 3, intArray);
         Gson gson = new Gson();
         MyJson myJson = new MyJson();
         Assertions.assertEquals(gson.toJson(testJsonClass), myJson.toJson(testJsonClass));
@@ -55,9 +62,10 @@ class MyJsonTest {
 
     @Test
     void myObjectCollectionToJsonTest() {
-        var myObjectList = List.of(new TestJsonClass("3Text", 3),
-            new TestJsonClass("1Text", 1),
-            new TestJsonClass("2Text", 2));
+        int[] intArray = new int[]{1,  2,  3};
+        var myObjectList = List.of(new TestJsonClass("3Text", 3, intArray),
+            new TestJsonClass("1Text", 1, intArray),
+            new TestJsonClass("2Text", 2, intArray));
         Gson gson = new Gson();
         MyJson myJson = new MyJson();
         Assertions.assertEquals(myJson.toJson(myObjectList), gson.toJson(myObjectList));
@@ -65,9 +73,10 @@ class MyJsonTest {
 
     @Test
     void myObjectArrayToJsonTest() {
-        var myObjectArray = new TestJsonClass[] {new TestJsonClass("3Text", 3),
-                new TestJsonClass("1Text", 1),
-                new TestJsonClass("2Text", 2)};
+        int[] intArray = new int[]{1,  2,  3};
+        var myObjectArray = new TestJsonClass[] {new TestJsonClass("3Text", 3, intArray),
+                new TestJsonClass("1Text", 1, intArray),
+                new TestJsonClass("2Text", 2, intArray)};
         Gson gson = new Gson();
         MyJson myJson = new MyJson();
         Assertions.assertEquals(myJson.toJson(myObjectArray), gson.toJson(myObjectArray));

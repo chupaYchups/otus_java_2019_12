@@ -4,82 +4,115 @@ import javax.json.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MyJson {
 
-    public static String toJson(Object object) {
+    private Map<Class, MyAdapter> typeAdapterMap;
+
+    public MyJson() {
+        typeAdapterMap = new HashMap<>();
+        typeAdapterMap.put(Long.class, (object) -> Json.createValue((Long)object));
+        typeAdapterMap.put(Integer.class, (object) -> Json.createValue((Integer) object));
+        typeAdapterMap.put(Double.class, (object) -> Json.createValue((Double) object));
+        typeAdapterMap.put(String.class, (object) -> Json.createValue((String) object));
+    }
+
+    public String toJson(Object object) {
         JsonValue jsonStructure = createJsonStructure(object);
         return convertToString(jsonStructure);
     }
 
-    private static String convertToString(JsonValue JsonValue) {
+    private String convertToString(JsonValue JsonValue) {
         return JsonValue.toString();
     }
 
-    private static JsonValue createJsonStructure(Object object) {
+    private JsonValue createJsonStructure(Object object) {
         Class objectClass = object.getClass();
         JsonValue structure;
         if (objectClass.isArray()) {
-            structure =  processArray(object).build();
+            structure = processArray(object).build();
         } else if (Collection.class.isAssignableFrom(objectClass)) {
             structure = processCollection(object).build();
         } else {
-            structure = processObject(object).build();
+            var adapter = typeAdapterMap.get(objectClass);
+            if (adapter != null) {
+                structure = adapter.apply(object);
+            } else {
+                structure = processCustomObject(object).build();
+            }
         }
         return structure;
     }
 
-    private static JsonArrayBuilder processArray(Object arrayObject) {
+    private JsonArrayBuilder processArray(Object arrayObject) {
         int arrayLength = Array.getLength(arrayObject);
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
         for (int i = 0; i < arrayLength; i++) {
             Object element = Array.get(arrayObject, i);
-            arrayBuilder.add(processObject(element));
+            var adapter = typeAdapterMap.get(element.getClass());
+            if (adapter != null) {
+                arrayBuilder.add(adapter.apply(element));
+            } else {
+                arrayBuilder.add(processCustomObject(element));
+            }
         }
         return arrayBuilder;
     }
 
-    private static JsonArrayBuilder processCollection(Object collectionObj) {
+    private JsonArrayBuilder processCollection(Object collectionObj) {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        ((Collection) collectionObj).forEach(o -> arrayBuilder.add(processObject(o)));
+        ((Collection) collectionObj).forEach(o -> {
+            var adapter = typeAdapterMap.get(o.getClass());
+            if (adapter != null) {
+                arrayBuilder.add(adapter.apply(o));
+            } else {
+                arrayBuilder.add(processCustomObject(o).build());
+            }
+        });
         return arrayBuilder;
     }
 
-    private static JsonObjectBuilder processObject(Object object) {
-        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+    private JsonObjectBuilder processCustomObject(Object object) {
         Class objClass = object.getClass();
-        if (Number.class.isAssignableFrom(objClass)) {
-            return objectBuilder.add("", Json.createValue(new BigDecimal(object.toString())));
-        }
+        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
         return processObjectFields(object, objectBuilder, objClass);
     }
 
-    private static JsonObjectBuilder processObjectFields(Object object, JsonObjectBuilder objectBuilder, Class objClass) {
+    private JsonObjectBuilder processObjectFields(Object object, JsonObjectBuilder objectBuilder, Class objClass) {
+
         List<Field> fieldList = Arrays.stream(objClass.getDeclaredFields()).
-            filter(field -> !Modifier.isStatic(field.getModifiers())).
-            collect(Collectors.toList());
+                filter(field -> !Modifier.isStatic(field.getModifiers())).
+                collect(Collectors.toList());
+
         fieldList.forEach(field -> {
             field.setAccessible(true);
             try {
                 Class fieldClass = field.getType();
-                if (Number.class.isAssignableFrom(fieldClass)) {
-                    objectBuilder.add(field.getName(), new BigDecimal(field.get(object).toString()));
-                } else if (String.class.isAssignableFrom(fieldClass)) {
-                    objectBuilder.add(field.getName(), field.get(object).toString());
-                } else if (fieldClass.isArray()) {
-                    objectBuilder.add(field.getName(), processArray(object));
+                Object fieldValue = field.get(object);
+                if (fieldClass.isArray()) {
+                    objectBuilder.add(field.getName(), processArray(fieldValue));
                 } else if (Collection.class.isAssignableFrom(fieldClass)) {
-                    objectBuilder.add(field.getName(), processCollection(object));
+                    objectBuilder.add(field.getName(), processCollection(fieldValue));
+                } else {
+                    var adapter = typeAdapterMap.get(fieldClass);
+                    if (adapter != null) {
+                        objectBuilder.add(field.getName(), adapter.apply(fieldValue));
+                    } else {
+                        objectBuilder.add(field.getName(), processCustomObject(fieldValue));
+                    }
                 }
             } catch (IllegalAccessException e) {
                 throw new RuntimeException("Cannot get field value " + field.getName());
             }
         });
+
         return objectBuilder;
+    }
+
+    @FunctionalInterface
+    private interface MyAdapter {
+        JsonValue apply(Object object);
     }
 }
