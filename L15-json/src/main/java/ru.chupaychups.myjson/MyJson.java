@@ -7,23 +7,25 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
-//TODO Проверить на нуллы и подумать, какой шаблон проектирования можно ещё сюды впилить
-
 public class MyJson {
 
     private Map<Class, MyAdapter> typeAdapterMap;
 
     public MyJson() {
         typeAdapterMap = new HashMap<>();
-        typeAdapterMap.put(Long.class, (object) -> Json.createValue((Long)object));
-        typeAdapterMap.put(Integer.class, (object) -> Json.createValue((Integer) object));
-        typeAdapterMap.put(Double.class, (object) -> Json.createValue((Double) object));
-        typeAdapterMap.put(String.class, (object) -> Json.createValue((String) object));
+        typeAdapterMap.put(Long.class, object -> Json.createValue((Long)object));
+        typeAdapterMap.put(Integer.class, object -> Json.createValue((Integer) object));
+        typeAdapterMap.put(Double.class, object -> Json.createValue((Double) object));
+        typeAdapterMap.put(String.class, object -> Json.createValue((String) object));
+        typeAdapterMap.put(Float.class, object -> Json.createValue((Float) object));
+        typeAdapterMap.put(Short.class, object -> Json.createValue((Short) object));
+        typeAdapterMap.put(Byte.class, object -> Json.createValue((Byte) object));
+        typeAdapterMap.put(Character.class, object -> Json.createValue(((Character) object).toString()));
+        typeAdapterMap.put(Boolean.class, object -> ((Boolean)object) ? JsonValue.TRUE : JsonValue.FALSE);
     }
 
     public String toJson(Object object) {
-        JsonValue jsonStructure = createJsonStructure(object);
+        JsonValue jsonStructure = object != null ? createJsonStructure(object) : JsonValue.NULL;
         return convertToString(jsonStructure);
     }
 
