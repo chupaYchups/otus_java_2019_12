@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>L14-json</artifactId>
+    <artifactId>L15-json</artifactId>
 
     <dependencies>
         <dependency>
