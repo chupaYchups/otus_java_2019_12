@@ -69,14 +69,25 @@ public class ToJsonStringVisitor extends ClassFieldVisitor<String> {
         return new ProcessOperation<String>(List.of(childOp)) {
             @Override
             public String execute() {
-                return childOp == null ? "" : "\"" + field.getName() + "\"" + ":" + childOperationsToString(childOperations);
+                return "\"" + field.getName() + "\"" + ":" + childOperationsToString(childOperations);
             }
         };
     }
     private String childOperationsToString(List<ProcessOperation<String>> childOperations) {
         return childOperations.stream().
                 map(stringProcessOperation -> stringProcessOperation.execute()).
+                filter(s -> !s.isEmpty()).
                 collect(Collectors.joining(","));
+    }
+
+    @Override
+    public ProcessOperation<String> getNullRootObjectOperation() {
+        return new ProcessOperation<String>(null) {
+            @Override
+            public String execute() {
+                return "null";
+            }
+        };
     }
 
     @Override
@@ -84,7 +95,7 @@ public class ToJsonStringVisitor extends ClassFieldVisitor<String> {
         return new ProcessOperation<String>(null) {
             @Override
             public String execute() {
-                return "null";
+                return "";
             }
         };
     }

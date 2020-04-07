@@ -17,6 +17,9 @@ import java.util.stream.Collectors;
 public abstract class ClassFieldVisitor <T> {
 
     public ProcessOperation<T> inspectObject(Object object) {
+        if (object == null) {
+            return getNullRootObjectOperation();
+        }
         return processObject(object, null);
     }
 
@@ -28,20 +31,20 @@ public abstract class ClassFieldVisitor <T> {
         }
         Class objectClass = object.getClass();
         if (objectClass.isArray()) {
-            returnOp = processArray(object, field);
+            returnOp = processArray(object);
         } else if (Collection.class.isAssignableFrom(objectClass)) {
-            returnOp = processCollection(object, field);
+            returnOp = processCollection(object);
         } else {
             if (isPrimitiveType(objectClass)) {
-                returnOp = processPrimitiveType(object, field);
+                returnOp = processPrimitiveType(object);
             } else {
-                returnOp = processCustomObject(object, field);
+                returnOp = processCustomObject(object);
             }
         }
-        return returnOp;
+        return field != null ? getFieldOperation(field, returnOp) : returnOp;
     }
 
-    private ProcessOperation<T> processArray(Object arrayObject, Field field) {
+    private ProcessOperation<T> processArray(Object arrayObject) {
         List<ProcessOperation<T>> elementOperationList = new ArrayList<>();
         int arrayLength = Array.getLength(arrayObject);
         for (int i = 0; i < arrayLength; i++) {
@@ -49,19 +52,19 @@ public abstract class ClassFieldVisitor <T> {
             elementOperationList.add(processObject(element, null));
         }
 
-        return field != null ? getFieldOperation(field, getArrayOperation(elementOperationList)) : getArrayOperation(elementOperationList);
+        return getArrayOperation(elementOperationList);
     }
 
-    private ProcessOperation<T> processCollection(Object collectionObj, Field field) {
+    private ProcessOperation<T> processCollection(Object collectionObj) {
         List<ProcessOperation<T>> elementOperationList = new ArrayList<>();
         ((Collection)collectionObj).forEach(o -> {
             elementOperationList.add(processObject(o, null));
         });
 
-        return field != null ? getFieldOperation(field, getCollectionOperation(elementOperationList)) : getCollectionOperation(elementOperationList);
+        return getCollectionOperation(elementOperationList);
     }
 
-    private ProcessOperation<T> processCustomObject(Object object, Field customObjField) {
+    private ProcessOperation<T> processCustomObject(Object object) {
         Class objectClass = object.getClass();
         List<ProcessOperation<T>> elementOperationList = new ArrayList<>();
 
@@ -79,11 +82,11 @@ public abstract class ClassFieldVisitor <T> {
             }
         });
 
-        return customObjField != null ? getFieldOperation(customObjField, getCustomObjectOperation(elementOperationList)) : getCustomObjectOperation(elementOperationList);
+        return getCustomObjectOperation(elementOperationList);
     }
 
-    private ProcessOperation<T> processPrimitiveType(Object object, Field field) {
-        return field != null ? getFieldOperation(field, getPrimitiveTypeOperation(object)) : getPrimitiveTypeOperation(object);
+    private ProcessOperation<T> processPrimitiveType(Object object) {
+        return getPrimitiveTypeOperation(object);
     }
 
     private boolean isPrimitiveType(Class objectClass) {
@@ -96,6 +99,8 @@ public abstract class ClassFieldVisitor <T> {
 
         private Object obj;
         protected List<ProcessOperation<T>> childOperations;
+
+        ProcessOperation() {}
 
         ProcessOperation(Object object) {
             this.obj = object;
@@ -115,4 +120,5 @@ public abstract class ClassFieldVisitor <T> {
     public abstract ProcessOperation<T> getCustomObjectOperation(List<ProcessOperation<T>> opList);
     public abstract ProcessOperation<T> getFieldOperation(Field field, ProcessOperation childOp);
     public abstract ProcessOperation<T> getNullObjectOperation();
+    public abstract  ProcessOperation<T> getNullRootObjectOperation();
 }
