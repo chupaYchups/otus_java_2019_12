@@ -80,12 +80,12 @@ public class OldModelAtm implements Atm {
 
     @Override
     public void applyMemento(AtmMemento memento) {
-        this.cellByNominalMap = new TreeMap<>(memento.getState().cellByNominalMap);
+        this.cellByNominalMap = new TreeMap<>(memento.getState().cellByNomMap);
     }
 
     @Override
     public AtmMemento saveMemento() {
-        return new AtmMemento(new State(cellByNominalMap));
+        return new AtmMemento(new State());
     }
 
     @Override
@@ -98,14 +98,14 @@ public class OldModelAtm implements Atm {
      */
     public class State {
 
-        private NavigableMap<BillNominal, AtmCell> cellByNominalMap;
+        private NavigableMap<BillNominal, AtmCell> cellByNomMap;
 
-        private State(NavigableMap<BillNominal, AtmCell> cellMap) {
-            cellByNominalMap = new TreeMap<>();
-            cellMap.forEach((billNominal, atmCell) -> {
+        private State() {
+            cellByNomMap = new TreeMap<>();
+            cellByNominalMap.forEach((billNominal, atmCell) -> {
                 AtmCell cell = atmCell.doClone();
-                cellByNominalMap.put(billNominal, cell);
-                cell.setCellByNominalMap(cellByNominalMap);
+                cellByNomMap.put(billNominal, cell);
+                cell.setCellByNominalMap(cellByNomMap);
             });
         }
     }
