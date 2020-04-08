@@ -2,12 +2,11 @@ package ru.chupaYchups.atm.cell;
 
 import ru.chupaYchups.atm.bill.Bill;
 import ru.chupaYchups.atm.bill.BillNominal;
-import ru.chupaYchups.atm.cell.memento.CellMementoSaver;
 
 import java.util.List;
 import java.util.NavigableMap;
 
-public interface AtmCell extends AtmCellCommandExecutor, CellMementoSaver {
+public interface AtmCell extends AtmCellCommandExecutor {
 
     List<Bill> getBills(int quantity);
 

@@ -7,6 +7,8 @@ import ru.chupaYchups.atm.cell.RubleCell;
 import ru.chupaYchups.atm.cell.command.*;
 import ru.chupaYchups.atm.command.AtmCommand;
 import ru.chupaYchups.atm.exception.AtmException;
+import ru.chupaYchups.atm.memento.AtmMemento;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -77,14 +79,18 @@ public class OldModelAtm implements Atm {
     }
 
     @Override
-    public void resetToInitialState() {
-        this.cellByNominalMap = new TreeMap<>(history.getLast().getState().getCellMap());
-        history.clear();
+    public void applyMemento(AtmMemento memento) {
+        this.cellByNominalMap = new TreeMap<>(memento.getState().cellByNominalMap);
     }
 
     @Override
-    public void saveMemento() {
-        history.push(new AtmMemento(new State(cellByNominalMap)));
+    public AtmMemento saveMemento() {
+        return new AtmMemento(new State(cellByNominalMap));
+    }
+
+    @Override
+    public void revertToInitalState() {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -94,27 +100,13 @@ public class OldModelAtm implements Atm {
 
         private NavigableMap<BillNominal, AtmCell> cellByNominalMap;
 
-        State(NavigableMap<BillNominal, AtmCell> cellMap) {
+        private State(NavigableMap<BillNominal, AtmCell> cellMap) {
             cellByNominalMap = new TreeMap<>();
             cellMap.forEach((billNominal, atmCell) -> {
                 AtmCell cell = atmCell.doClone();
                 cellByNominalMap.put(billNominal, cell);
                 cell.setCellByNominalMap(cellByNominalMap);
             });
-        }
-
-        NavigableMap<BillNominal, AtmCell> getCellMap() {
-            return cellByNominalMap;
-        }
-    }
-
-    private class AtmMemento {
-        private State state;
-        AtmMemento(State state) {
-            this.state = state;
-        }
-        State getState() {
-            return state;
         }
     }
 }

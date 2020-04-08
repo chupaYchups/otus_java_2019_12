@@ -15,16 +15,20 @@ public class AtmFactory {
     }
 
     public Atm createATM() {
-        return new OldModelAtm(nominalList);
+        return createProxiedAtmObject();
     }
 
     public Atm createATM(Map<BillNominal, Integer> billNominalMap) {
-        Atm atm = new OldModelAtm(nominalList);
+        Atm atm = createProxiedAtmObject();
         atm.putSumm(billNominalMap.
             entrySet().
             stream().
             flatMap(billNominalIntegerEntry -> BillFactory.createBillList(billNominalIntegerEntry.getValue(), billNominalIntegerEntry.getKey()).stream()).
             collect(Collectors.toList()));
         return atm;
+    }
+
+    private Atm createProxiedAtmObject() {
+        return new AtmHistoryProxy(new OldModelAtm(nominalList));
     }
 }

@@ -4,8 +4,6 @@ import ru.chupaYchups.atm.bill.Bill;
 import ru.chupaYchups.atm.bill.BillNominal;
 import ru.chupaYchups.atm.bill.RubleBill;
 import ru.chupaYchups.atm.cell.command.AtmCellChainCommand;
-import ru.chupaYchups.atm.cell.memento.AtmCellMemento;
-import ru.chupaYchups.atm.cell.memento.CellMementoSaver;
 import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -73,26 +71,9 @@ public class RubleCell implements AtmCell {
     }
 
     @Override
-    public void restore(AtmCellMemento memento) {
-        State state = memento.getState();
-        this.billList = state.getBillList();
-    }
-
-    @Override
-    public AtmCellMemento saveMemento() {
-        return new AtmCellMemento(new CellMementoSaver.State(billList));
-    }
-
-    @Override
-    public void restoreToInitialState() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public AtmCell doClone() {
         RubleCell cell = new RubleCell(this.nominal);
         cell.putBills(this.billList.stream().map(bill -> ((RubleBill)bill).clone()).collect(Collectors.toList()));
-        //cell.setCellByNominalMap(this.cellByNominalMap.get());
         return cell;
     }
 }
