@@ -17,13 +17,14 @@ class ClassicDepartmentTest {
     public static final long SECOND_ATM_ID = 2L;
     public static final long THIRD_ATM_ID = 3L;
     private Department department;
+    private AtmFactory atmFactory;
     private final Integer TEST_INITIAL_BALANCE = 5000;
     private Map<Long, Map<BillNominal, Integer>> initialStateMap;
 
     @BeforeEach
     void setUp() {
         department = new ClassicDepartment();
-        AtmFactory atmFactory = new AtmFactory(List.of(BillNominal.values()));
+        atmFactory = new AtmFactory(List.of(BillNominal.values()));
         //Раскладываем в разных купюрах TEST_INITIAL_BALANCE
         initialStateMap = Map.of(1L, Map.of(BillNominal.NOMINAL_1000, 1, BillNominal.NOMINAL_500, 2),
                 2L, Map.of(BillNominal.NOMINAL_500, 2, BillNominal.NOMINAL_100, 10),

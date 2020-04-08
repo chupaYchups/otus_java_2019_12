@@ -4,7 +4,6 @@ import ru.chupaYchups.atm.Atm;
 import ru.chupaYchups.atm.command.AtmCommand;
 import ru.chupaYchups.atm.command.GetTotalBalanceCommand;
 import ru.chupaYchups.atm.command.ResetToInitialStateCommand;
-
 import java.util.HashMap;
 import java.util.Map;
 

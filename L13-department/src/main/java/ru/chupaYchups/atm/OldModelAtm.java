@@ -7,13 +7,14 @@ import ru.chupaYchups.atm.cell.RubleCell;
 import ru.chupaYchups.atm.cell.command.*;
 import ru.chupaYchups.atm.command.AtmCommand;
 import ru.chupaYchups.atm.exception.AtmException;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class OldModelAtm implements Atm {
 
     private NavigableMap<BillNominal, AtmCell> cellByNominalMap;
+
+    private Deque<AtmMemento> history;
 
     OldModelAtm(final List<BillNominal> nominals) {
         if (nominals.isEmpty()) {
@@ -25,6 +26,7 @@ public class OldModelAtm implements Atm {
             cell.setCellByNominalMap(cellByNominalMap);
             cellByNominalMap.put(billNominal, cell);
         });
+        history = new ArrayDeque();
     }
 
     @Override
@@ -48,6 +50,7 @@ public class OldModelAtm implements Atm {
                 map(entry -> entry.getKey().getBills(entry.getValue())).
                 flatMap(bills -> bills.stream()).collect(Collectors.toList());
 
+        saveMemento();
         return billList;
     }
 
@@ -58,6 +61,7 @@ public class OldModelAtm implements Atm {
         if (!command.isFinished()) {
             throw new AtmException("Cannot put bills in ATM, invalid nominals");
         }
+        saveMemento();
     }
 
     @Override
@@ -74,9 +78,43 @@ public class OldModelAtm implements Atm {
 
     @Override
     public void resetToInitialState() {
-        AtmCellCommand command = new ResetToInitialStateCommand();
-        for(AtmCell cell : cellByNominalMap.values()) {
-            command.execute(cell);
+        this.cellByNominalMap = new TreeMap<>(history.getLast().getState().getCellMap());
+        history.clear();
+    }
+
+    @Override
+    public void saveMemento() {
+        history.push(new AtmMemento(new State(cellByNominalMap)));
+    }
+
+    /**
+     * Cостояние банкомата
+     */
+    public class State {
+
+        private NavigableMap<BillNominal, AtmCell> cellByNominalMap;
+
+        State(NavigableMap<BillNominal, AtmCell> cellMap) {
+            cellByNominalMap = new TreeMap<>();
+            cellMap.forEach((billNominal, atmCell) -> {
+                AtmCell cell = atmCell.doClone();
+                cellByNominalMap.put(billNominal, cell);
+                cell.setCellByNominalMap(cellByNominalMap);
+            });
+        }
+
+        NavigableMap<BillNominal, AtmCell> getCellMap() {
+            return cellByNominalMap;
+        }
+    }
+
+    private class AtmMemento {
+        private State state;
+        AtmMemento(State state) {
+            this.state = state;
+        }
+        State getState() {
+            return state;
         }
     }
 }

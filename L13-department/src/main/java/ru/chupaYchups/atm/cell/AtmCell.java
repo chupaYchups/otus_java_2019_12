@@ -5,6 +5,7 @@ import ru.chupaYchups.atm.bill.BillNominal;
 import ru.chupaYchups.atm.cell.memento.CellMementoSaver;
 
 import java.util.List;
+import java.util.NavigableMap;
 
 public interface AtmCell extends AtmCellCommandExecutor, CellMementoSaver {
 
@@ -17,4 +18,8 @@ public interface AtmCell extends AtmCellCommandExecutor, CellMementoSaver {
     BillNominal getNominal();
 
     int getBalance();
+
+    void setCellByNominalMap(NavigableMap<BillNominal, AtmCell> cellByNominalMap);
+
+    AtmCell doClone();
 }

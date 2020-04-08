@@ -2,13 +2,15 @@ package ru.chupaYchups.atm.cell;
 
 import ru.chupaYchups.atm.bill.Bill;
 import ru.chupaYchups.atm.bill.BillNominal;
+import ru.chupaYchups.atm.bill.RubleBill;
 import ru.chupaYchups.atm.cell.command.AtmCellChainCommand;
 import ru.chupaYchups.atm.cell.memento.AtmCellMemento;
 import ru.chupaYchups.atm.cell.memento.CellMementoSaver;
 import java.lang.ref.WeakReference;
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class RubleCell implements AtmCell  {
+public class RubleCell implements AtmCell {
 
     private List<Bill> billList;
 
@@ -65,6 +67,7 @@ public class RubleCell implements AtmCell  {
         command.execute(this);
     }
 
+    @Override
     public void setCellByNominalMap(NavigableMap<BillNominal, AtmCell> cellByNominalMap) {
         this.cellByNominalMap = new WeakReference(cellByNominalMap);
     }
@@ -83,5 +86,13 @@ public class RubleCell implements AtmCell  {
     @Override
     public void restoreToInitialState() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public AtmCell doClone() {
+        RubleCell cell = new RubleCell(this.nominal);
+        cell.putBills(this.billList.stream().map(bill -> ((RubleBill)bill).clone()).collect(Collectors.toList()));
+        //cell.setCellByNominalMap(this.cellByNominalMap.get());
+        return cell;
     }
 }

@@ -7,6 +7,7 @@ import ru.chupaYchups.atm.cell.memento.AtmCellMemento;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
+import java.util.NavigableMap;
 
 /**
  * Прокси сохранения истории состояния ячейки
@@ -80,5 +81,15 @@ public class AtmCellSaveStateProxy implements AtmCell {
     public void restoreToInitialState() {
         cell.restore(history.peek());
         history.clear();
+    }
+
+    @Override
+    public AtmCell doClone() {
+        return null;
+    }
+
+    @Override
+    public void setCellByNominalMap(NavigableMap<BillNominal, AtmCell> cellByNominalMap) {
+
     }
 }
