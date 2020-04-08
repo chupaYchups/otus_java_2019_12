@@ -116,7 +116,7 @@ public abstract class ClassFieldVisitor <T> {
     public abstract ProcessOperation<T> getPrimitiveTypeOperation(Object object);
     public abstract ProcessOperation<T> getArrayOperation(List<ProcessOperation<T>> opList);
     public abstract ProcessOperation<T> getCollectionOperation(List<ProcessOperation<T>> opList);
-//    public abstract ProcessOperation<T> getRootObjectOperation(List<ProcessOperation<T>> opList);
+//    public abstract Pro   ProcessOperation<T> getRootObjectOperation(List<ProcessOperation<T>> opList);
     public abstract ProcessOperation<T> getCustomObjectOperation(List<ProcessOperation<T>> opList);
     public abstract ProcessOperation<T> getFieldOperation(Field field, ProcessOperation childOp);
     public abstract ProcessOperation<T> getNullObjectOperation();

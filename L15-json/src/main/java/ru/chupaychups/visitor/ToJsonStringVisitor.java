@@ -44,16 +44,6 @@ public class ToJsonStringVisitor extends ClassFieldVisitor<String> {
         };
     }
 
-/*    @Override
-    public ProcessOperation<String> getRootObjectOperation(List<ProcessOperation<String>> opList) {
-        return new ProcessOperation<String>(opList) {
-            @Override
-            public String execute() {
-                return "{" + childOperationsToString(childOperations) + "}";
-            }
-        };
-    }*/
-
     @Override
     public ProcessOperation<String> getCustomObjectOperation(List<ProcessOperation<String>> opList) {
         return new ProcessOperation<String>(opList) {
