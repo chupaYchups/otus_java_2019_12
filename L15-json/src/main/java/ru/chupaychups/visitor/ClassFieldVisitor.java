@@ -45,7 +45,7 @@ public abstract class ClassFieldVisitor <T> {
         return returnOp;
     }
 
-    private Supplier processArray(Object arrayObject, Field field) {
+    private Supplier<T> processArray(Object arrayObject, Field field) {
         List<Supplier<T>> elementOperationList = new ArrayList<>();
         int arrayLength = Array.getLength(arrayObject);
         for (int i = 0; i < arrayLength; i++) {
@@ -56,7 +56,7 @@ public abstract class ClassFieldVisitor <T> {
         return getArrayOperation(elementOperationList, field);
     }
 
-    private Supplier processCollection(Object collectionObj, Field field) {
+    private Supplier<T> processCollection(Object collectionObj, Field field) {
         List<Supplier<T>> elementOperationList = new ArrayList<>();
         ((Collection)collectionObj).forEach(o -> {
             elementOperationList.add(processObject(o, null));
@@ -65,7 +65,7 @@ public abstract class ClassFieldVisitor <T> {
         return getCollectionOperation(elementOperationList, field);
     }
 
-    private Supplier processCustomObject(Object object, Field fld) {
+    private Supplier<T> processCustomObject(Object object, Field fld) {
         Class objectClass = object.getClass();
         List<Supplier<T>> elementOperationList = new ArrayList<>();
 
