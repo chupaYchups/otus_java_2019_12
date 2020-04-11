@@ -6,11 +6,12 @@ import org.slf4j.LoggerFactory;
 import ru.chupaYchups.core.dao.UserDao;
 import ru.chupaYchups.core.dao.UserDaoException;
 import ru.chupaYchups.core.model.User;
+import ru.chupaYchups.jdbc.orm.MyOrmMapper;
 import ru.chupaYchups.core.sessionmanager.SessionManager;
 import ru.chupaYchups.jdbc.DbExecutor;
 import ru.chupaYchups.jdbc.sessionmanager.SessionManagerJdbc;
+
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -29,15 +30,18 @@ public class UserDaoJdbc implements UserDao {
   @Override
   public Optional<User> findById(long id) {
     try {
-      return dbExecutor.selectRecord(getConnection(), "select id, name from user where id  = ?", id, resultSet -> {
-        try {
+      MyOrmMapper<User> mapper = new MyOrmMapper<>();
+      String selectQuery = mapper.generateFindByIdQuery();
+      return dbExecutor.selectRecord(getConnection(), selectQuery, id, resultSet -> {
+        /*try {
           if (resultSet.next()) {
             return new User(resultSet.getLong("id"), resultSet.getString("name"));
           }
         } catch (SQLException e) {
           logger.error(e.getMessage(), e);
         }
-        return null;
+        return null;*/
+        return mapper.mapResultToObject(resultSet);
       });
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
