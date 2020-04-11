@@ -1,97 +1,20 @@
 package ru.chupaychups.myjson;
 
-import org.junit.jupiter.api.Test;
 import com.google.gson.Gson;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
-import org.assertj.core.api.Assertions;
 
+@DisplayName("Тест проверяющий что моя реализация JSON")
 class MyJsonTest {
 
-    @Test
-    void objectToJsonTest() {
-        Long myLong = 4L;
-        Gson gson = new Gson();
-        MyJson myJson = new MyJson();
-        Assertions.assertThat(myJson.toJson(myLong)).isEqualTo(gson.toJson(myLong));
-    }
-
-    @Test
-    void objectCollectionToJsonTest() {
-        var myDoubleList = List.of(1.33, 1.25, 19);
-        Gson gson = new Gson();
-        MyJson myJson = new MyJson();
-
-    }
-
-    @Test
-    void primitiveArrayToJsonTest() {
-        int[] myIntPrimitiveArray = new int[]{1,2,3};
-        Gson gson = new Gson();
-        MyJson myJson = new MyJson();
-        Assertions.assertThat(myJson.toJson(myIntPrimitiveArray)).isEqualTo(gson.toJson(myIntPrimitiveArray));
-    }
-
-    @Test
-    void primitiveToJsonTest() {
-        int myInt = 1;
-        Gson gson = new Gson();
-        MyJson myJson = new MyJson();
-        Assertions.assertThat(myJson.toJson(myInt)).isEqualTo(gson.toJson(myInt));
-    }
-
-
-    @Test
-    void objectArrayToJsonTest() {
-        Integer[] myIntArray = new Integer[]{1,2,3};
-        Gson gson = new Gson();
-        MyJson myJson = new MyJson();
-        System.out.println((gson.toJson(myIntArray)));
-        Assertions.assertThat(myJson.toJson(myIntArray)).isEqualTo(gson.toJson(myIntArray));
-    }
-
-    @Test
-    void myObjectToJsonTest() {
-        int[] intArray = new int[]{1,  2,  3};
-        TestJsonClass testJsonClass = new TestJsonClass("123123", 3, intArray);
-        Gson gson = new Gson();
-        MyJson myJson = new MyJson();
-        Assertions.assertThat(myJson.toJson(testJsonClass)).isEqualTo(gson.toJson(testJsonClass));
-    }
-
-    @Test
-    void myObjectCollectionToJsonTest() {
-        int[] intArray = new int[]{1,  2,  3};
-        var myObjectList = List.of(new TestJsonClass("3Text", 3, intArray),
-            new TestJsonClass("1Text", 1, intArray),
-            new TestJsonClass("2Text", 2, intArray));
-        Gson gson = new Gson();
-        MyJson myJson = new MyJson();
-        Assertions.assertThat(myJson.toJson(myObjectList)).isEqualTo(gson.toJson(myObjectList));
-    }
-
-    @Test
-    void myObjectArrayToJsonTest() {
-        int[] intArray = new int[]{1,  2,  3};
-        var myObjectArray = new TestJsonClass[] {new TestJsonClass("3Text", 3, intArray),
-                new TestJsonClass("1Text", 1, intArray),
-                new TestJsonClass("2Text", 2, intArray)};
-        Gson gson = new Gson();
-        MyJson myJson = new MyJson();
-        Assertions.assertThat(myJson.toJson(myObjectArray)).isEqualTo(gson.toJson(myObjectArray));
-    }
-
-    @Test
-    void nullTest(){
-        Gson gson = new Gson();
-        MyJson myJson = new MyJson();
-        Assertions.assertThat(myJson.toJson(null)).isEqualTo(gson.toJson(null));
-    }
-
+    @DisplayName("Корректно преобразует разные типы обьектов в строку")
     @ParameterizedTest
     @MethodSource("generateDataForCustomTest")
     void customTest(Object o){

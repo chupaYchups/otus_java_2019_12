@@ -35,7 +35,7 @@ public abstract class ClassFieldVisitor <T> {
         } else if (Collection.class.isAssignableFrom(objectClass)) {
             returnOp = processCollection(object);
         } else {
-            if (isPrimitiveType(objectClass)) {
+            if (isPrimitiveTypeOperation(objectClass)) {
                 returnOp = processPrimitiveType(object);
             } else {
                 returnOp = processCustomObject(object);
@@ -89,18 +89,10 @@ public abstract class ClassFieldVisitor <T> {
         return getPrimitiveTypeOperation(object);
     }
 
-    private boolean isPrimitiveType(Class objectClass) {
-        return String.class.isAssignableFrom(objectClass) ||
-               Number.class.isAssignableFrom(objectClass) ||
-               Character.class.isAssignableFrom(objectClass);
-    }
-
     public abstract class ProcessOperation<T> {
 
         private Object obj;
         protected List<ProcessOperation<T>> childOperations;
-
-        ProcessOperation() {}
 
         ProcessOperation(Object object) {
             this.obj = object;
@@ -113,10 +105,10 @@ public abstract class ClassFieldVisitor <T> {
         public abstract T execute();
     }
 
+    public abstract boolean isPrimitiveTypeOperation(Class cls);
     public abstract ProcessOperation<T> getPrimitiveTypeOperation(Object object);
     public abstract ProcessOperation<T> getArrayOperation(List<ProcessOperation<T>> opList);
     public abstract ProcessOperation<T> getCollectionOperation(List<ProcessOperation<T>> opList);
-//    public abstract Pro   ProcessOperation<T> getRootObjectOperation(List<ProcessOperation<T>> opList);
     public abstract ProcessOperation<T> getCustomObjectOperation(List<ProcessOperation<T>> opList);
     public abstract ProcessOperation<T> getFieldOperation(Field field, ProcessOperation childOp);
     public abstract ProcessOperation<T> getNullObjectOperation();

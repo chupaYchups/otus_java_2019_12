@@ -8,17 +8,29 @@ import java.util.stream.Collectors;
 
 public class ToJsonStringVisitor extends ClassFieldVisitor<String> {
 
-    final Map<Class, Function<Object, String>> typeAdapterMap = Map.of(String.class, object -> "\"" + object + "\"",
-        Integer.class, object -> object.toString(),
-        Character.class, object -> "\"" + object.toString() + "\""
+    final Map<Class, Function<Object, String>> primitiveTypeAdapterMap = Map.of(
+            String.class, object -> "\"" + object + "\"",
+            Integer.class, object -> object.toString(),
+            Character.class, object -> "\"" + object.toString() + "\"",
+            Long.class, object -> object.toString(),
+            Double.class, object -> object.toString(),
+            Float.class, object -> object.toString(),
+            Short.class, object -> object.toString(),
+            Byte.class, object -> object.toString(),
+            Boolean.class, object -> object.toString()
     );
+
+    @Override
+    public boolean isPrimitiveTypeOperation(Class cls) {
+        return cls != null && primitiveTypeAdapterMap.keySet().contains(cls);
+    }
 
     @Override
     public ProcessOperation<String> getPrimitiveTypeOperation(Object object) {
         return new ProcessOperation<String>(object) {
             @Override
             public String execute() {
-                return typeAdapterMap.get(object.getClass()).apply(object);
+                return primitiveTypeAdapterMap.get(object.getClass()).apply(object);
             }
         };
     }
@@ -33,15 +45,9 @@ public class ToJsonStringVisitor extends ClassFieldVisitor<String> {
         };
     }
 
-    //TODO аналогично тому, что делаеться с массивом
     @Override
     public ProcessOperation<String> getCollectionOperation(List<ProcessOperation<String>> opList) {
-        return new ProcessOperation<String>(opList) {
-            @Override
-            public String execute() {
-                return "[" + childOperationsToString(childOperations) + "]";
-            }
-        };
+        return getArrayOperation(opList);
     }
 
     @Override
