@@ -1,8 +1,13 @@
 package ru.chupaYchups.jdbc.orm.visitor;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ClassFieldInfo {
+
+    public ClassFieldInfo() {
+        fieldValueMap = new HashMap<>();
+    }
 
     private String primaryKeyFieldName;
 

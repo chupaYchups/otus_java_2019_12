@@ -2,9 +2,9 @@ package ru.chupaYchups.jdbc.orm;
 
 import java.sql.ResultSet;
 
-public interface OrmMapper {
+public interface OrmMapper<T> {
 
     String generateFindByIdQuery();
 
-    Object mapResultToObject(ResultSet resultSet);
+    T mapResultToObject(ResultSet resultSet);
 }
