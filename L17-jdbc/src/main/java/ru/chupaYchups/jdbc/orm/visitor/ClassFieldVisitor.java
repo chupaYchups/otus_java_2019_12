@@ -90,14 +90,6 @@ public abstract class ClassFieldVisitor <T> {
         return getPrimitiveTypeOperation(object, field);
     }
 
-/*    public abstract class ProcessOperation<T> {
-
-        ProcessOperation() {
-        }
-
-        public abstract T execute();
-    }*/
-
     public abstract boolean isPrimitiveTypeOperation(Class cls);
     public abstract Supplier<T> getPrimitiveTypeOperation(Object object, Field field);
     public abstract Supplier<T> getArrayOperation(List<Supplier<T>> opList, Field field);
