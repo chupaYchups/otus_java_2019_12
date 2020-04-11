@@ -26,49 +26,48 @@ public class ToJsonStringVisitor extends ClassFieldVisitor<String> {
     }
 
     @Override
-    public ProcessOperation<String> getPrimitiveTypeOperation(Object object) {
+    public ProcessOperation<String> getPrimitiveTypeOperation(Object object, Field field) {
         return new ProcessOperation<String>(object) {
             @Override
             public String execute() {
-                return primitiveTypeAdapterMap.get(object.getClass()).apply(object);
+                return getFieldString(field) + primitiveTypeAdapterMap.get(object.getClass()).apply(object);
             }
         };
     }
 
     @Override
-    public ProcessOperation<String> getArrayOperation(List<ProcessOperation<String>> opList) {
+    public ProcessOperation<String> getArrayOperation(List<ProcessOperation<String>> opList, Field field) {
         return new ProcessOperation<String>(opList) {
             @Override
             public String execute() {
-                return "[" + childOperationsToString(childOperations) + "]";
+                return getFieldString(field) + "[" + childOperationsToString(childOperations) + "]";
             }
         };
     }
 
     @Override
-    public ProcessOperation<String> getCollectionOperation(List<ProcessOperation<String>> opList) {
-        return getArrayOperation(opList);
+    public ProcessOperation<String> getCollectionOperation(List<ProcessOperation<String>> opList, Field field) {
+        return getArrayOperation(opList, field);
     }
 
     @Override
-    public ProcessOperation<String> getCustomObjectOperation(List<ProcessOperation<String>> opList) {
+    public ProcessOperation<String> getCustomObjectOperation(List<ProcessOperation<String>> opList, Field field) {
         return new ProcessOperation<String>(opList) {
             @Override
             public String execute() {
-                return "{" + childOperationsToString(childOperations) + "}";
+                return getFieldString(field) + "{" + childOperationsToString(childOperations) + "}";
             }
         };
     }
 
-    @Override
-    public ProcessOperation<String> getFieldOperation(Field field, ProcessOperation childOp) {
-        return new ProcessOperation<String>(List.of(childOp)) {
-            @Override
-            public String execute() {
-                return "\"" + field.getName() + "\"" + ":" + childOperationsToString(childOperations);
-            }
-        };
+    private String getFieldString(Field field) {
+        if (field == null) {
+            return "";
+        }
+        return  "\"" + field.getName() + "\"" + ":";
     }
+
+
     private String childOperationsToString(List<ProcessOperation<String>> childOperations) {
         return childOperations.stream().
                 map(stringProcessOperation -> stringProcessOperation.execute()).

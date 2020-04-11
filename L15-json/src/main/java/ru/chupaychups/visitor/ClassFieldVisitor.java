@@ -31,20 +31,20 @@ public abstract class ClassFieldVisitor <T> {
         }
         Class objectClass = object.getClass();
         if (objectClass.isArray()) {
-            returnOp = processArray(object);
+            returnOp = processArray(object, field);
         } else if (Collection.class.isAssignableFrom(objectClass)) {
-            returnOp = processCollection(object);
+            returnOp = processCollection(object, field);
         } else {
             if (isPrimitiveTypeOperation(objectClass)) {
-                returnOp = processPrimitiveType(object);
+                returnOp = processPrimitiveType(object, field);
             } else {
-                returnOp = processCustomObject(object);
+                returnOp = processCustomObject(object, field);
             }
         }
-        return field != null ? getFieldOperation(field, returnOp) : returnOp;
+        return returnOp;
     }
 
-    private ProcessOperation<T> processArray(Object arrayObject) {
+    private ProcessOperation processArray(Object arrayObject, Field field) {
         List<ProcessOperation<T>> elementOperationList = new ArrayList<>();
         int arrayLength = Array.getLength(arrayObject);
         for (int i = 0; i < arrayLength; i++) {
@@ -52,19 +52,19 @@ public abstract class ClassFieldVisitor <T> {
             elementOperationList.add(processObject(element, null));
         }
 
-        return getArrayOperation(elementOperationList);
+        return getArrayOperation(elementOperationList, field);
     }
 
-    private ProcessOperation<T> processCollection(Object collectionObj) {
+    private ProcessOperation processCollection(Object collectionObj, Field field) {
         List<ProcessOperation<T>> elementOperationList = new ArrayList<>();
         ((Collection)collectionObj).forEach(o -> {
             elementOperationList.add(processObject(o, null));
         });
 
-        return getCollectionOperation(elementOperationList);
+        return getCollectionOperation(elementOperationList, field);
     }
 
-    private ProcessOperation<T> processCustomObject(Object object) {
+    private ProcessOperation processCustomObject(Object object, Field fld) {
         Class objectClass = object.getClass();
         List<ProcessOperation<T>> elementOperationList = new ArrayList<>();
 
@@ -82,11 +82,11 @@ public abstract class ClassFieldVisitor <T> {
             }
         });
 
-        return getCustomObjectOperation(elementOperationList);
+        return getCustomObjectOperation(elementOperationList, fld);
     }
 
-    private ProcessOperation<T> processPrimitiveType(Object object) {
-        return getPrimitiveTypeOperation(object);
+    private ProcessOperation<T> processPrimitiveType(Object object, Field field) {
+        return getPrimitiveTypeOperation(object, field);
     }
 
     public abstract class ProcessOperation<T> {
@@ -106,11 +106,10 @@ public abstract class ClassFieldVisitor <T> {
     }
 
     public abstract boolean isPrimitiveTypeOperation(Class cls);
-    public abstract ProcessOperation<T> getPrimitiveTypeOperation(Object object);
-    public abstract ProcessOperation<T> getArrayOperation(List<ProcessOperation<T>> opList);
-    public abstract ProcessOperation<T> getCollectionOperation(List<ProcessOperation<T>> opList);
-    public abstract ProcessOperation<T> getCustomObjectOperation(List<ProcessOperation<T>> opList);
-    public abstract ProcessOperation<T> getFieldOperation(Field field, ProcessOperation childOp);
+    public abstract ProcessOperation<T> getPrimitiveTypeOperation(Object object, Field field);
+    public abstract ProcessOperation<T> getArrayOperation(List<ProcessOperation<T>> opList, Field field);
+    public abstract ProcessOperation<T> getCollectionOperation(List<ProcessOperation<T>> opList, Field field);
+    public abstract ProcessOperation<T> getCustomObjectOperation(List<ProcessOperation<T>> opList, Field field);
     public abstract ProcessOperation<T> getNullObjectOperation();
     public abstract  ProcessOperation<T> getNullRootObjectOperation();
 }
