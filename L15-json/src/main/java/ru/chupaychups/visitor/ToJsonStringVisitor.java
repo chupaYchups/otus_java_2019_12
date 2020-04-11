@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class ToJsonStringVisitor extends ClassFieldVisitor<String> {
@@ -26,38 +27,23 @@ public class ToJsonStringVisitor extends ClassFieldVisitor<String> {
     }
 
     @Override
-    public ProcessOperation<String> getPrimitiveTypeOperation(Object object, Field field) {
-        return new ProcessOperation<String>(object) {
-            @Override
-            public String execute() {
-                return getFieldString(field) + primitiveTypeAdapterMap.get(object.getClass()).apply(object);
-            }
-        };
+    public Supplier<String> getPrimitiveTypeOperation(Object object, Field field) {
+        return () -> getFieldString(field) + primitiveTypeAdapterMap.get(object.getClass()).apply(object);
     }
 
     @Override
-    public ProcessOperation<String> getArrayOperation(List<ProcessOperation<String>> opList, Field field) {
-        return new ProcessOperation<String>(opList) {
-            @Override
-            public String execute() {
-                return getFieldString(field) + "[" + childOperationsToString(childOperations) + "]";
-            }
-        };
+    public Supplier<String> getArrayOperation(List<Supplier<String>> opList, Field field) {
+        return () -> getFieldString(field) + "[" + childOperationsToString(opList) + "]";
     }
 
     @Override
-    public ProcessOperation<String> getCollectionOperation(List<ProcessOperation<String>> opList, Field field) {
+    public Supplier<String> getCollectionOperation(List<Supplier<String>> opList, Field field) {
         return getArrayOperation(opList, field);
     }
 
     @Override
-    public ProcessOperation<String> getCustomObjectOperation(List<ProcessOperation<String>> opList, Field field) {
-        return new ProcessOperation<String>(opList) {
-            @Override
-            public String execute() {
-                return getFieldString(field) + "{" + childOperationsToString(childOperations) + "}";
-            }
-        };
+    public Supplier<String> getCustomObjectOperation(List<Supplier<String>> opList, Field field) {
+        return () -> getFieldString(field) + "{" + childOperationsToString(opList) + "}";
     }
 
     private String getFieldString(Field field) {
@@ -68,30 +54,20 @@ public class ToJsonStringVisitor extends ClassFieldVisitor<String> {
     }
 
 
-    private String childOperationsToString(List<ProcessOperation<String>> childOperations) {
+    private String childOperationsToString(List<Supplier<String>> childOperations) {
         return childOperations.stream().
-                map(stringProcessOperation -> stringProcessOperation.execute()).
+                map(stringSupplier -> stringSupplier.get()).
                 filter(s -> !s.isEmpty()).
                 collect(Collectors.joining(","));
     }
 
     @Override
-    public ProcessOperation<String> getNullRootObjectOperation() {
-        return new ProcessOperation<String>(null) {
-            @Override
-            public String execute() {
-                return "null";
-            }
-        };
+    public Supplier<String> getNullRootObjectOperation() {
+        return () -> "null";
     }
 
     @Override
-    public ProcessOperation<String> getNullObjectOperation() {
-        return new ProcessOperation<String>(null) {
-            @Override
-            public String execute() {
-                return "";
-            }
-        };
+    public Supplier<String> getNullObjectOperation() {
+        return () -> "";
     }
 }

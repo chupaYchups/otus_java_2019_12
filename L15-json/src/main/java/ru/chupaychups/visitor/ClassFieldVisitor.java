@@ -7,16 +7,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
  * Паттерн визитор - по полям класса,
  * производит глубокий обход полей класса, с созданием операций для каждого
  * поля.
-*/
+ */
 public abstract class ClassFieldVisitor <T> {
 
-    public ProcessOperation<T> inspectObject(Object object) {
+    public Supplier<T> inspectObject(Object object) {
         if (object == null) {
             return getNullRootObjectOperation();
         }
@@ -24,8 +25,8 @@ public abstract class ClassFieldVisitor <T> {
     }
 
     //Основная логика обращения с конкретным узлом
-    private ProcessOperation<T> processObject(Object object, Field field) {
-        ProcessOperation<T> returnOp;
+    private Supplier<T> processObject(Object object, Field field) {
+        Supplier<T> returnOp;
         if (object == null) {
             return getNullObjectOperation();
         }
@@ -44,8 +45,8 @@ public abstract class ClassFieldVisitor <T> {
         return returnOp;
     }
 
-    private ProcessOperation processArray(Object arrayObject, Field field) {
-        List<ProcessOperation<T>> elementOperationList = new ArrayList<>();
+    private Supplier processArray(Object arrayObject, Field field) {
+        List<Supplier<T>> elementOperationList = new ArrayList<>();
         int arrayLength = Array.getLength(arrayObject);
         for (int i = 0; i < arrayLength; i++) {
             Object element = Array.get(arrayObject, i);
@@ -55,8 +56,8 @@ public abstract class ClassFieldVisitor <T> {
         return getArrayOperation(elementOperationList, field);
     }
 
-    private ProcessOperation processCollection(Object collectionObj, Field field) {
-        List<ProcessOperation<T>> elementOperationList = new ArrayList<>();
+    private Supplier processCollection(Object collectionObj, Field field) {
+        List<Supplier<T>> elementOperationList = new ArrayList<>();
         ((Collection)collectionObj).forEach(o -> {
             elementOperationList.add(processObject(o, null));
         });
@@ -64,9 +65,9 @@ public abstract class ClassFieldVisitor <T> {
         return getCollectionOperation(elementOperationList, field);
     }
 
-    private ProcessOperation processCustomObject(Object object, Field fld) {
+    private Supplier processCustomObject(Object object, Field fld) {
         Class objectClass = object.getClass();
-        List<ProcessOperation<T>> elementOperationList = new ArrayList<>();
+        List<Supplier<T>> elementOperationList = new ArrayList<>();
 
         List<Field> fieldList = Arrays.stream(objectClass.getDeclaredFields()).
                 filter(field -> !Modifier.isStatic(field.getModifiers())).
@@ -85,31 +86,15 @@ public abstract class ClassFieldVisitor <T> {
         return getCustomObjectOperation(elementOperationList, fld);
     }
 
-    private ProcessOperation<T> processPrimitiveType(Object object, Field field) {
+    private Supplier<T> processPrimitiveType(Object object, Field field) {
         return getPrimitiveTypeOperation(object, field);
     }
 
-    public abstract class ProcessOperation<T> {
-
-        private Object obj;
-        protected List<ProcessOperation<T>> childOperations;
-
-        ProcessOperation(Object object) {
-            this.obj = object;
-        }
-
-        ProcessOperation(List<ProcessOperation<T>> childOperations) {
-            this.childOperations = childOperations;
-        }
-
-        public abstract T execute();
-    }
-
     public abstract boolean isPrimitiveTypeOperation(Class cls);
-    public abstract ProcessOperation<T> getPrimitiveTypeOperation(Object object, Field field);
-    public abstract ProcessOperation<T> getArrayOperation(List<ProcessOperation<T>> opList, Field field);
-    public abstract ProcessOperation<T> getCollectionOperation(List<ProcessOperation<T>> opList, Field field);
-    public abstract ProcessOperation<T> getCustomObjectOperation(List<ProcessOperation<T>> opList, Field field);
-    public abstract ProcessOperation<T> getNullObjectOperation();
-    public abstract  ProcessOperation<T> getNullRootObjectOperation();
+    public abstract Supplier<T> getPrimitiveTypeOperation(Object object, Field field);
+    public abstract Supplier<T> getArrayOperation(List<Supplier<T>> opList, Field field);
+    public abstract Supplier<T> getCollectionOperation(List<Supplier<T>> opList, Field field);
+    public abstract Supplier<T> getCustomObjectOperation(List<Supplier<T>> opList, Field field);
+    public abstract Supplier<T> getNullObjectOperation();
+    public abstract Supplier<T> getNullRootObjectOperation();
 }
