@@ -1,18 +1,17 @@
 package ru.chupaYchups.jdbc.dao;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.chupaYchups.core.dao.UserDao;
 import ru.chupaYchups.core.dao.UserDaoException;
-import ru.chupaYchups.core.model.User;
-import ru.chupaYchups.jdbc.orm.MyOrmMapper;
 import ru.chupaYchups.core.sessionmanager.SessionManager;
 import ru.chupaYchups.jdbc.DbExecutor;
+import ru.chupaYchups.jdbc.orm.result_mapper.QueryResultMapper;
+import ru.chupaYchups.jdbc.orm.sql_generator.SqlGenerator;
+import ru.chupaYchups.jdbc.orm.model.User;
 import ru.chupaYchups.jdbc.sessionmanager.SessionManagerJdbc;
-
 import java.sql.Connection;
-import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 public class UserDaoJdbc implements UserDao {
@@ -20,29 +19,22 @@ public class UserDaoJdbc implements UserDao {
 
   private final SessionManagerJdbc sessionManager;
   private final DbExecutor<User> dbExecutor;
+  private final SqlGenerator<User> sqlGenerator;
+  private final QueryResultMapper<User> resultMapper;
 
-  public UserDaoJdbc(SessionManagerJdbc sessionManager, DbExecutor<User> dbExecutor) {
+  public UserDaoJdbc(SessionManagerJdbc sessionManager, DbExecutor<User> dbExecutor, SqlGenerator<User> sqlGenerator, QueryResultMapper<User> resultMapper) {
     this.sessionManager = sessionManager;
     this.dbExecutor = dbExecutor;
+    this.sqlGenerator = sqlGenerator;
+    this.resultMapper = resultMapper;
   }
 
 
   @Override
   public Optional<User> findById(long id) {
     try {
-      MyOrmMapper<User> mapper = new MyOrmMapper<>();
-      String selectQuery = mapper.generateFindByIdQuery();
-      return dbExecutor.selectRecord(getConnection(), selectQuery, id, resultSet -> {
-        /*try {
-          if (resultSet.next()) {
-            return new User(resultSet.getLong("id"), resultSet.getString("name"));
-          }
-        } catch (SQLException e) {
-          logger.error(e.getMessage(), e);
-        }
-        return null;*/
-        return mapper.mapResultToObject(resultSet);
-      });
+      String selectQuery = sqlGenerator.getFindByIdQuery();
+      return dbExecutor.selectRecord(getConnection(), selectQuery, id, resultSet -> resultMapper.mapResultToObject(resultSet));
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
     }
@@ -53,7 +45,11 @@ public class UserDaoJdbc implements UserDao {
   @Override
   public long saveUser(User user) {
     try {
-      return dbExecutor.insertRecord(getConnection(), "insert into user(name) values (?)", Collections.singletonList(user.getName()));
+      String insertQuery = sqlGenerator.getInsertStatement();
+      //List<String> valuesList = sqlGenerator.getValuesList();
+      long id = dbExecutor.insertRecord(getConnection(), insertQuery, /*valuesList*/ List.of(user.getName(), user.getAge().toString()));
+      user.setId(id);
+      return id;
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
       throw new UserDaoException(e);

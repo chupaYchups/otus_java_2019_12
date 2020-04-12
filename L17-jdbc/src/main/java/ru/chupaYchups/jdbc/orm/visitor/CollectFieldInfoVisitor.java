@@ -2,9 +2,9 @@ package ru.chupaYchups.jdbc.orm.visitor;
 
 import ru.chupaYchups.jdbc.orm.annotation.Id;
 import ru.chupaYchups.jdbc.orm.visitor.exception.FieldInfoCollectorException;
+
 import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 
 public class CollectFieldInfoVisitor extends ClassFieldVisitor<ClassFieldInfo> {
@@ -26,12 +26,17 @@ public class CollectFieldInfoVisitor extends ClassFieldVisitor<ClassFieldInfo> {
     public Supplier<ClassFieldInfo> getPrimitiveTypeOperation(Object object, Field field) {
         return () -> {
             ClassFieldInfo fieldInfo = new ClassFieldInfo();
-            fieldInfo.getFieldValueMap().put(field.getName(), object.toString());
+            fieldInfo.getFieldNames().add(field.getName());
             if (field.isAnnotationPresent(Id.class)) {
                 fieldInfo.setPrimaryKeyFieldName(field.getName());
             }
             return fieldInfo;
         };
+    }
+
+    @Override
+    public Supplier<ClassFieldInfo> getNullObjectOperation(Field field) {
+        return getPrimitiveTypeOperation(null, field);
     }
 
     @Override
@@ -52,7 +57,7 @@ public class CollectFieldInfoVisitor extends ClassFieldVisitor<ClassFieldInfo> {
         }
         return () -> {
             ClassFieldInfo commonFieldInfo = new ClassFieldInfo();
-            Map<String, String> fieldValueMap = commonFieldInfo.getFieldValueMap();
+            List<String> fieldNames = commonFieldInfo.getFieldNames();
             for (Supplier<ClassFieldInfo> fieldInfoSupplier : opList) {
                 ClassFieldInfo info = fieldInfoSupplier.get();
                 if (info.getPrimaryKeyFieldName() != null) {
@@ -61,18 +66,13 @@ public class CollectFieldInfoVisitor extends ClassFieldVisitor<ClassFieldInfo> {
                     }
                     commonFieldInfo.setPrimaryKeyFieldName(info.getPrimaryKeyFieldName());
                 }
-                fieldValueMap.putAll(info.getFieldValueMap());
+                fieldNames.addAll(info.getFieldNames());
             }
             if (commonFieldInfo.getPrimaryKeyFieldName() == null) {
                 throw new FieldInfoCollectorException("Cannot find primary key field");
             }
             return commonFieldInfo;
         };
-    }
-
-    @Override
-    public Supplier<ClassFieldInfo> getNullObjectOperation() {
-        throw new FieldInfoCollectorException("Value of object is null");
     }
 
     @Override

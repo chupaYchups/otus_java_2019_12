@@ -4,9 +4,8 @@ package ru.chupaYchups.core.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.chupaYchups.core.dao.UserDao;
-import ru.chupaYchups.core.model.User;
 import ru.chupaYchups.core.sessionmanager.SessionManager;
-
+import ru.chupaYchups.jdbc.orm.model.User;
 import java.util.Optional;
 
 public class DbServiceUserImpl implements DBServiceUser {
@@ -19,13 +18,12 @@ public class DbServiceUserImpl implements DBServiceUser {
   }
 
   @Override
-  public long saveUser(User user) {
+  public long create(User user) {
     try (SessionManager sessionManager = userDao.getSessionManager()) {
       sessionManager.beginSession();
       try {
         long userId = userDao.saveUser(user);
         sessionManager.commitSession();
-
         logger.info("created user: {}", userId);
         return userId;
       } catch (Exception e) {
@@ -38,12 +36,11 @@ public class DbServiceUserImpl implements DBServiceUser {
 
 
   @Override
-  public Optional<User> getUser(long id) {
+  public Optional<User> load(long id) {
     try (SessionManager sessionManager = userDao.getSessionManager()) {
       sessionManager.beginSession();
       try {
         Optional<User> userOptional = userDao.findById(id);
-
         logger.info("user: {}", userOptional.orElse(null));
         return userOptional;
       } catch (Exception e) {
@@ -54,4 +51,13 @@ public class DbServiceUserImpl implements DBServiceUser {
     }
   }
 
+  @Override
+  public void update(User user) {
+
+  }
+
+  @Override
+  public void createOrUpdate(User user) {
+
+  }
 }

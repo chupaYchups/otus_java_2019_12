@@ -1,31 +1,27 @@
 package ru.chupaYchups.jdbc.orm.visitor;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClassFieldInfo {
 
-    public ClassFieldInfo() {
-        fieldValueMap = new HashMap<>();
-    }
-
     private String primaryKeyFieldName;
+    private List<String> fieldNames;
 
-    private Map<String, String> fieldValueMap;
+    public ClassFieldInfo() {
+        fieldNames = new ArrayList<>();
+    }
 
     public String getPrimaryKeyFieldName() {
         return primaryKeyFieldName;
     }
-
     public void setPrimaryKeyFieldName(String primaryKeyFieldName) {
         this.primaryKeyFieldName = primaryKeyFieldName;
     }
-
-    public Map<String, String> getFieldValueMap() {
-        return fieldValueMap;
+    public List<String> getFieldNames() {
+        return fieldNames;
     }
-
-    public void setFieldValueMap(Map<String, String> fieldValueMap) {
-        this.fieldValueMap = fieldValueMap;
+    public void setFieldNames(List<String> fieldNames) {
+        this.fieldNames = fieldNames;
     }
 }

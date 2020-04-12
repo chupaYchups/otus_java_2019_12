@@ -1,8 +1,6 @@
 package ru.chupaYchups.jdbc.orm.visitor;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,11 +22,25 @@ public abstract class ClassFieldVisitor <T> {
         return processObject(object, null);
     }
 
+    public Supplier<T> inspectClass(Class cls) {
+        Constructor constructor;
+        Object objectToInspect;
+        try {
+            constructor = cls.getConstructor();
+            objectToInspect = constructor.newInstance();
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException("Entity class must have non parameter constructor");
+        } catch (ReflectiveOperationException re) {
+            throw new RuntimeException("Error while trying to instantiate class " + cls.getName(), re);
+        }
+        return processObject(objectToInspect, null);
+    }
+
     //Основная логика обращения с конкретным узлом
     private Supplier<T> processObject(Object object, Field field) {
         Supplier<T> returnOp;
         if (object == null) {
-            return getNullObjectOperation();
+            return getNullObjectOperation(field);
         }
         Class objectClass = object.getClass();
         if (objectClass.isArray()) {
@@ -95,6 +107,6 @@ public abstract class ClassFieldVisitor <T> {
     public abstract Supplier<T> getArrayOperation(List<Supplier<T>> opList, Field field);
     public abstract Supplier<T> getCollectionOperation(List<Supplier<T>> opList, Field field);
     public abstract Supplier<T> getCustomObjectOperation(List<Supplier<T>> opList, Field field);
-    public abstract Supplier<T> getNullObjectOperation();
+    public abstract Supplier<T> getNullObjectOperation(Field field);
     public abstract Supplier<T> getNullRootObjectOperation();
 }
