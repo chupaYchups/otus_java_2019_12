@@ -5,6 +5,7 @@ import ru.chupaYchups.jdbc.orm.visitor.exception.FieldInfoCollectorException;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class CollectFieldInfoVisitor extends ClassFieldVisitor<ClassFieldInfo> {
@@ -26,7 +27,7 @@ public class CollectFieldInfoVisitor extends ClassFieldVisitor<ClassFieldInfo> {
     public Supplier<ClassFieldInfo> getPrimitiveTypeOperation(Object object, Field field) {
         return () -> {
             ClassFieldInfo fieldInfo = new ClassFieldInfo();
-            fieldInfo.getFieldNames().add(field.getName());
+            fieldInfo.getFieldValuesMap().put(field.getName(), object != null ? object.toString() : null);
             if (field.isAnnotationPresent(Id.class)) {
                 fieldInfo.setPrimaryKeyFieldName(field.getName());
             }
@@ -57,7 +58,7 @@ public class CollectFieldInfoVisitor extends ClassFieldVisitor<ClassFieldInfo> {
         }
         return () -> {
             ClassFieldInfo commonFieldInfo = new ClassFieldInfo();
-            List<String> fieldNames = commonFieldInfo.getFieldNames();
+            Map<String, String> commonFieldValuesMap = commonFieldInfo.getFieldValuesMap();
             for (Supplier<ClassFieldInfo> fieldInfoSupplier : opList) {
                 ClassFieldInfo info = fieldInfoSupplier.get();
                 if (info.getPrimaryKeyFieldName() != null) {
@@ -66,7 +67,7 @@ public class CollectFieldInfoVisitor extends ClassFieldVisitor<ClassFieldInfo> {
                     }
                     commonFieldInfo.setPrimaryKeyFieldName(info.getPrimaryKeyFieldName());
                 }
-                fieldNames.addAll(info.getFieldNames());
+                commonFieldValuesMap.putAll(info.getFieldValuesMap());
             }
             if (commonFieldInfo.getPrimaryKeyFieldName() == null) {
                 throw new FieldInfoCollectorException("Cannot find primary key field");

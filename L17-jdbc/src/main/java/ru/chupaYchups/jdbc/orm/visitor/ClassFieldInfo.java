@@ -1,15 +1,15 @@
 package ru.chupaYchups.jdbc.orm.visitor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 
 public class ClassFieldInfo {
 
     private String primaryKeyFieldName;
-    private List<String> fieldNames;
+    private NavigableMap<String, String> fieldValuesMap;
 
     public ClassFieldInfo() {
-        fieldNames = new ArrayList<>();
+        fieldValuesMap = new TreeMap<>();
     }
 
     public String getPrimaryKeyFieldName() {
@@ -18,10 +18,12 @@ public class ClassFieldInfo {
     public void setPrimaryKeyFieldName(String primaryKeyFieldName) {
         this.primaryKeyFieldName = primaryKeyFieldName;
     }
-    public List<String> getFieldNames() {
-        return fieldNames;
+
+    public NavigableMap<String, String> getFieldValuesMap() {
+        return fieldValuesMap;
     }
-    public void setFieldNames(List<String> fieldNames) {
-        this.fieldNames = fieldNames;
+
+    public void setFieldValuesMap(NavigableMap<String, String> fieldValuesMap) {
+        this.fieldValuesMap = fieldValuesMap;
     }
 }

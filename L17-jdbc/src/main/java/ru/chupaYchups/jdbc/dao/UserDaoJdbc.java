@@ -6,10 +6,12 @@ import ru.chupaYchups.core.dao.UserDao;
 import ru.chupaYchups.core.dao.UserDaoException;
 import ru.chupaYchups.core.sessionmanager.SessionManager;
 import ru.chupaYchups.jdbc.DbExecutor;
+import ru.chupaYchups.jdbc.orm.model.User;
 import ru.chupaYchups.jdbc.orm.result_mapper.QueryResultMapper;
 import ru.chupaYchups.jdbc.orm.sql_generator.SqlGenerator;
-import ru.chupaYchups.jdbc.orm.model.User;
+import ru.chupaYchups.jdbc.orm.sql_generator.SqlOperationInfo;
 import ru.chupaYchups.jdbc.sessionmanager.SessionManagerJdbc;
+
 import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
@@ -33,8 +35,9 @@ public class UserDaoJdbc implements UserDao {
   @Override
   public Optional<User> findById(long id) {
     try {
-      String selectQuery = sqlGenerator.getFindByIdQuery();
-      return dbExecutor.selectRecord(getConnection(), selectQuery, id, resultSet -> resultMapper.mapResultToObject(resultSet));
+      SqlOperationInfo<Long> operationInfo = sqlGenerator.getFindByIdQuery(id);
+      return dbExecutor.selectRecord(getConnection(), operationInfo.getQuery(),
+          operationInfo.getParameter(), resultSet -> resultMapper.mapResultToObject(resultSet, operationInfo.getParameterNameList()));
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
     }
@@ -45,9 +48,8 @@ public class UserDaoJdbc implements UserDao {
   @Override
   public long saveUser(User user) {
     try {
-      String insertQuery = sqlGenerator.getInsertStatement();
-      //List<String> valuesList = sqlGenerator.getValuesList();
-      long id = dbExecutor.insertRecord(getConnection(), insertQuery, /*valuesList*/ List.of(user.getName(), user.getAge().toString()));
+      SqlOperationInfo<List<String>> operationInfo = sqlGenerator.getInsertStatement(user);
+      long id = dbExecutor.insertRecord(getConnection(), operationInfo.getQuery(), operationInfo.getParameter());
       user.setId(id);
       return id;
     } catch (Exception e) {

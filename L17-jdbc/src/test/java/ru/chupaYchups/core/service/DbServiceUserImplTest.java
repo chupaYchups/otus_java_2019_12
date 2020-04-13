@@ -12,9 +12,6 @@ import ru.chupaYchups.jdbc.orm.result_mapper.QueryResultMapper;
 import ru.chupaYchups.jdbc.orm.result_mapper.QueryResultMapperImpl;
 import ru.chupaYchups.jdbc.orm.sql_generator.SqlGenerator;
 import ru.chupaYchups.jdbc.orm.sql_generator.SqlGeneratorImpl;
-import ru.chupaYchups.jdbc.orm.visitor.ClassFieldInfo;
-import ru.chupaYchups.jdbc.orm.visitor.ClassFieldVisitor;
-import ru.chupaYchups.jdbc.orm.visitor.CollectFieldInfoVisitor;
 import ru.chupaYchups.jdbc.sessionmanager.SessionManagerJdbc;
 
 import javax.sql.DataSource;
@@ -56,10 +53,9 @@ class DbServiceUserImplTest {
         createTable(dataSource, CREATE_TABLE_USER_SCRIPT);
 
         DbExecutor<User> dbExecutor = new DbExecutor<>();
-        ClassFieldVisitor<ClassFieldInfo> visitor = new CollectFieldInfoVisitor();
-        ClassFieldInfo classFieldInfo = visitor.inspectClass(User.class).get();
-        SqlGenerator sqlGenerator = new SqlGeneratorImpl(User.class, classFieldInfo);
-        QueryResultMapper resultMapper = new QueryResultMapperImpl(User.class, classFieldInfo);
+
+        SqlGenerator sqlGenerator = new SqlGeneratorImpl(User.class);
+        QueryResultMapper resultMapper = new QueryResultMapperImpl(User.class);
 
         UserDao userDao = new UserDaoJdbc(sessionManager, dbExecutor, sqlGenerator, resultMapper);
 
@@ -79,13 +75,12 @@ class DbServiceUserImplTest {
 
     @Test
     void testThatSaveAndLoadAccountWorkCorrectly() throws SQLException {
-/*        createTable(dataSource, CREATE_TABLE_ACCOUNT_SCRIPT);
+/*        createTable(dataSource, CREATE_TABLE_USER_SCRIPT);
 
         DbExecutor<User> dbExecutor = new DbExecutor<>();
-        ClassFieldVisitor<ClassFieldInfo> visitor = new CollectFieldInfoVisitor();
-        ClassFieldInfo classFieldInfo = visitor.inspectClass(User.class).get();
-        SqlGenerator sqlGenerator = new SqlGeneratorImpl(User.class, classFieldInfo);
-        QueryResultMapper resultMapper = new QueryResultMapperImpl(User.class, classFieldInfo);
+
+        SqlGenerator sqlGenerator = new SqlGeneratorImpl(User.class);
+        QueryResultMapper resultMapper = new QueryResultMapperImpl(User.class);
 
         UserDao userDao = new UserDaoJdbc(sessionManager, dbExecutor, sqlGenerator, resultMapper);
 

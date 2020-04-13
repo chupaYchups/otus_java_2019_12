@@ -1,6 +1,9 @@
 package ru.chupaYchups.jdbc.orm.sql_generator;
 
+import java.util.List;
+
 public interface SqlGenerator<T> {
-    String getFindByIdQuery();
-    String getInsertStatement();
+    SqlOperationInfo<Long> getFindByIdQuery(long id);
+    SqlOperationInfo<List<String>> getInsertStatement(T object);
 }
+
