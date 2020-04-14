@@ -2,12 +2,14 @@ package ru.chupaYchups.jdbc.orm.model;
 
 import ru.chupaYchups.jdbc.orm.annotation.Id;
 
+import java.util.Objects;
+
 public class Account {
 
     @Id
     private Long no;
     private String type;
-    private Long number;
+    private Long rest;
 
     public Long getNo() {
         return no;
@@ -25,11 +27,21 @@ public class Account {
         this.type = type;
     }
 
-    public Long getNumber() {
-        return number;
+    public Long getRest() {
+        return rest;
     }
 
-    public void setNumber(Long number) {
-        this.number = number;
+    public void setRest(Long rest) {
+        this.rest = rest;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Account account = (Account) o;
+        return Objects.equals(no, account.no) &&
+                Objects.equals(type, account.type) &&
+                Objects.equals(rest, account.rest);
     }
 }

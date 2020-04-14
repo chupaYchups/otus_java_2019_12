@@ -1,15 +1,14 @@
 package ru.chupaYchups.core.dao;
 
 import ru.chupaYchups.core.sessionmanager.SessionManager;
-import ru.chupaYchups.jdbc.orm.model.User;
 
 import java.util.Optional;
 
-public interface UserDao {
+public interface EntityDao<T> {
 
-  Optional<User> findById(long id);
+  Optional<T> findById(long id);
 
-  long saveUser(User user);
+  long save(T user);
 
   SessionManager getSessionManager();
 }

@@ -3,10 +3,11 @@ package ru.chupaYchups.core.service;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.chupaYchups.core.dao.UserDao;
+import ru.chupaYchups.core.dao.EntityDao;
 import ru.chupaYchups.h2.DataSourceH2;
 import ru.chupaYchups.jdbc.DbExecutor;
-import ru.chupaYchups.jdbc.dao.UserDaoJdbc;
+import ru.chupaYchups.jdbc.dao.EntityDaoJdbc;
+import ru.chupaYchups.jdbc.orm.model.Account;
 import ru.chupaYchups.jdbc.orm.model.User;
 import ru.chupaYchups.jdbc.orm.result_mapper.QueryResultMapper;
 import ru.chupaYchups.jdbc.orm.result_mapper.QueryResultMapperImpl;
@@ -57,17 +58,17 @@ class DbServiceUserImplTest {
         SqlGenerator sqlGenerator = new SqlGeneratorImpl(User.class);
         QueryResultMapper resultMapper = new QueryResultMapperImpl(User.class);
 
-        UserDao userDao = new UserDaoJdbc(sessionManager, dbExecutor, sqlGenerator, resultMapper);
+        EntityDao<User> userDao = new EntityDaoJdbc<>(sessionManager, dbExecutor, sqlGenerator, resultMapper);
 
-        DBServiceUser dbServiceUser = new DbServiceUserImpl(userDao);
+        DbService<User> dbService = new DbServiceImpl<>(userDao);
 
         User userToSave = new User();
         userToSave.setAge(30L);
         userToSave.setName("lol");
 
-        dbServiceUser.create(userToSave);
+        userToSave.setId(dbService.create(userToSave));
 
-        Optional<User> userReturned = dbServiceUser.load(1l);
+        Optional<User> userReturned = dbService.load(1l);
 
         Assertions.assertThat(userReturned.isPresent());
         Assertions.assertThat(userReturned.get()).isEqualTo(userToSave);
@@ -75,26 +76,26 @@ class DbServiceUserImplTest {
 
     @Test
     void testThatSaveAndLoadAccountWorkCorrectly() throws SQLException {
-/*        createTable(dataSource, CREATE_TABLE_USER_SCRIPT);
+        createTable(dataSource, CREATE_TABLE_ACCOUNT_SCRIPT);
 
         DbExecutor<User> dbExecutor = new DbExecutor<>();
 
-        SqlGenerator sqlGenerator = new SqlGeneratorImpl(User.class);
-        QueryResultMapper resultMapper = new QueryResultMapperImpl(User.class);
+        SqlGenerator sqlGenerator = new SqlGeneratorImpl(Account.class);
+        QueryResultMapper resultMapper = new QueryResultMapperImpl(Account.class);
 
-        UserDao userDao = new UserDaoJdbc(sessionManager, dbExecutor, sqlGenerator, resultMapper);
+        EntityDao<Account> userDao = new EntityDaoJdbc<>(sessionManager, dbExecutor, sqlGenerator, resultMapper);
 
-        DBServiceUser dbServiceUser = new DbServiceUserImpl(userDao);
+        DbService<Account> dbService = new DbServiceImpl<>(userDao);
 
-        User userToSave = new User();
-        userToSave.setAge(30L);
-        userToSave.setName("lol");
+        Account accountToSave = new Account();
+        accountToSave.setType("testAccType");
+        accountToSave.setRest(7777777L);
 
-        dbServiceUser.create(userToSave);
+        accountToSave.setNo(dbService.create(accountToSave));
 
-        Optional<User> userReturned = dbServiceUser.load(1l);
+        Optional<Account> accountReturned = dbService.load(1l);
 
-        Assertions.assertThat(userReturned.isPresent());
-        Assertions.assertThat(userReturned.get()).isEqualTo(userToSave);*/
+        Assertions.assertThat(accountReturned.isPresent());
+        Assertions.assertThat(accountReturned.get()).isEqualTo(accountToSave);
     }
 }
