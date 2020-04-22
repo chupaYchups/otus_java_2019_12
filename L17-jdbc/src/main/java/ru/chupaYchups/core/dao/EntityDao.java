@@ -8,7 +8,9 @@ public interface EntityDao<T> {
 
   Optional<T> findById(long id);
 
-  long save(T user);
+  long save(T entity);
+
+  void update(T entity);
 
   SessionManager getSessionManager();
 }

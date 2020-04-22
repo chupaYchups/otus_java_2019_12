@@ -11,6 +11,7 @@ import ru.chupaYchups.jdbc.orm.sql_generator.SqlGenerator;
 import ru.chupaYchups.jdbc.orm.sql_generator.SqlOperationInfo;
 import ru.chupaYchups.jdbc.sessionmanager.SessionManagerJdbc;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
@@ -49,8 +50,25 @@ public class EntityDaoJdbc<T> implements EntityDao<T> {
     try {
       SqlOperationInfo<List<String>> operationInfo = sqlGenerator.getInsertStatement(entity);
       long id = dbExecutor.insertRecord(getConnection(), operationInfo.getQuery(), operationInfo.getParameter());
-      //user.setId(id);
+      updatePrimaryKey(entity, operationInfo, id);
       return id;
+    } catch (Exception e) {
+      logger.error(e.getMessage(), e);
+      throw new UserDaoException(e);
+    }
+  }
+
+  private void updatePrimaryKey(T entity, SqlOperationInfo<List<String>> operationInfo, long id) throws IllegalAccessException, NoSuchFieldException {
+    Field primaryKeyField = entity.getClass().getDeclaredField(operationInfo.getPrimaryKeyFieldName());
+    primaryKeyField.setAccessible(true);
+    primaryKeyField.set(entity, id);
+  }
+
+  @Override
+  public void update(T entity) {
+    try {
+      SqlOperationInfo<List<String>> operationInfo = sqlGenerator.getUpdateStatement(entity);
+      dbExecutor.insertRecord(getConnection(), operationInfo.getQuery(), operationInfo.getParameter());
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
       throw new UserDaoException(e);

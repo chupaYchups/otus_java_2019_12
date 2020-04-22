@@ -7,6 +7,7 @@ public class SqlOperationInfo<T> {
     private String query;
     private T parameter;
     private List<String> parameterNameList;
+    private String primaryKeyFieldName;
 
     SqlOperationInfo() {}
 
@@ -32,5 +33,13 @@ public class SqlOperationInfo<T> {
 
     public void setParameter(T parameter) {
         this.parameter = parameter;
+    }
+
+    public String getPrimaryKeyFieldName() {
+        return primaryKeyFieldName;
+    }
+
+    public void setPrimaryKeyFieldName(String primaryKeyFieldName) {
+        this.primaryKeyFieldName = primaryKeyFieldName;
     }
 }

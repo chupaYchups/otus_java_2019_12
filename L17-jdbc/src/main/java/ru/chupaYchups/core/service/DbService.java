@@ -5,11 +5,11 @@ import java.util.Optional;
 
 public interface DbService<T> {
 
-  long create(T user);
+  void create(T entity);
 
-  void update(T user);
+  void update(T entity);
 
-  void createOrUpdate(T user);
+  void createOrUpdate(T entity);
 
   Optional<T> load(long id);
 }

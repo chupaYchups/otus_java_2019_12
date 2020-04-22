@@ -2,7 +2,6 @@ package ru.chupaYchups.jdbc.orm.sql_generator;
 
 import ru.chupaYchups.jdbc.orm.visitor.ClassFieldInfo;
 import ru.chupaYchups.jdbc.orm.visitor.CollectFieldInfoVisitor;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +11,8 @@ public class SqlGeneratorImpl<T> implements SqlGenerator<T> {
 
     public static final String SELECT_CLAUSE = "select";
     public static final String INSERT_CLAUSE = "insert into";
+    public static final String UPDATE_CLAUSE = "update";
+    public static final String SET = "set";
     public static final String LEFT_BRACKET = "(";
     public static final String RIGHT_BRACKET = ")";
     public static final String WHITESPACE = " ";
@@ -57,6 +58,7 @@ public class SqlGeneratorImpl<T> implements SqlGenerator<T> {
                 append(QUESTION).toString());
         info.setParameter(id);
         info.setParameterNameList(paramNameList);
+        info.setPrimaryKeyFieldName(classFieldInfo.getPrimaryKeyFieldName());
 
         return info;
     }
@@ -68,21 +70,50 @@ public class SqlGeneratorImpl<T> implements SqlGenerator<T> {
         Map<String, String> fieldValueMap = classFieldInfo.getFieldValuesMap();
         fieldValueMap.remove(classFieldInfo.getPrimaryKeyFieldName());
 
-        info.setQuery( new StringBuilder(INSERT_CLAUSE).append(WHITESPACE).
-                append(TABLE_NAME).append(WHITESPACE).
-                append(LEFT_BRACKET).append(WHITESPACE).
-                append(fieldValueMap.keySet().stream().collect(Collectors.joining(","))).append(WHITESPACE).
-                append(RIGHT_BRACKET).append(WHITESPACE).
-                append(VALUES_CLAUSE).
-                append(LEFT_BRACKET).append(WHITESPACE).
-                append(fieldValueMap.keySet().stream().map(s -> "?").collect(Collectors.joining(","))).append(WHITESPACE).
-                append(RIGHT_BRACKET).toString());
+        info.setQuery(new StringBuilder(INSERT_CLAUSE).append(WHITESPACE).
+            append(TABLE_NAME).append(WHITESPACE).
+            append(LEFT_BRACKET).append(WHITESPACE).
+            append(fieldValueMap.keySet().stream().collect(Collectors.joining(","))).append(WHITESPACE).
+            append(RIGHT_BRACKET).append(WHITESPACE).
+            append(VALUES_CLAUSE).
+            append(LEFT_BRACKET).append(WHITESPACE).
+            append(fieldValueMap.keySet().stream().map(s -> "?").collect(Collectors.joining(","))).append(WHITESPACE).
+            append(RIGHT_BRACKET).toString());
         info.setParameter(fieldValueMap.values().stream().collect(Collectors.toList()));
+        info.setPrimaryKeyFieldName(classFieldInfo.getPrimaryKeyFieldName());
 
         return info;
     }
 
-/*    private String getFieldListString(List<String> fields, boolean withPrimaryKey) {
+    @Override
+    public SqlOperationInfo<List<String>> getUpdateStatement(T object) {
+
+        ClassFieldInfo classFieldInfo = new CollectFieldInfoVisitor().inspectObject(object).get();
+        SqlOperationInfo<List<String>> info = new SqlOperationInfo<>();
+        Map<String, String> fieldValueMap = classFieldInfo.getFieldValuesMap();
+        String primaryKeyValue = fieldValueMap.remove(classFieldInfo.getPrimaryKeyFieldName());
+
+        info.setQuery(new StringBuilder(UPDATE_CLAUSE).append(WHITESPACE).
+            append(TABLE_NAME).append(WHITESPACE).
+            append(SET).append(WHITESPACE).
+            append(fieldValueMap.keySet().stream().
+                map(fieldName -> fieldName + EQUALS + QUESTION).
+                collect(Collectors.joining(COMMA))).append(WHITESPACE).
+            append(WHERE_CLAUSE).append(WHITESPACE).
+            append(classFieldInfo.getPrimaryKeyFieldName()).append(WHITESPACE).
+            append(EQUALS).append(WHITESPACE).
+            append(QUESTION).toString());
+
+
+        List<String> parameterValueList = fieldValueMap.values().stream().collect(Collectors.toList());
+        parameterValueList.add(primaryKeyValue);
+        info.setParameter(parameterValueList);
+
+        return info;
+    }
+
+
+    /*    private String getFieldListString(List<String> fields, boolean withPrimaryKey) {
         var stream = classFieldInfo.getFieldValuesMap().keySet().stream();
         if (!withPrimaryKey) {
             stream = stream.filter(s -> !classFieldInfo.getPrimaryKeyFieldName().equals(s));

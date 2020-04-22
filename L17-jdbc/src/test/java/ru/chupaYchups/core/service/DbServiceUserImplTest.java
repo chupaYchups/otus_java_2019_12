@@ -50,9 +50,8 @@ class DbServiceUserImplTest {
     }
 
     @Test
-    void testThatSaveAndLoadUserWorkCorrectly() throws SQLException {
+    void testThatCRUOperationsWithUserWorkCorrectly() throws SQLException {
         createTable(dataSource, CREATE_TABLE_USER_SCRIPT);
-
         DbExecutor<User> dbExecutor = new DbExecutor<>();
 
         SqlGenerator sqlGenerator = new SqlGeneratorImpl(User.class);
@@ -60,22 +59,49 @@ class DbServiceUserImplTest {
 
         EntityDao<User> userDao = new EntityDaoJdbc<>(sessionManager, dbExecutor, sqlGenerator, resultMapper);
 
-        DbService<User> dbService = new DbServiceImpl<>(userDao);
+        DbService<User> dbService = new DbServiceUser(userDao);
 
         User userToSave = new User();
         userToSave.setAge(30L);
         userToSave.setName("lol");
 
-        userToSave.setId(dbService.create(userToSave));
+        dbService.create(userToSave);
 
-        Optional<User> userReturned = dbService.load(1l);
+        Optional<User> userReturned = dbService.load(userToSave.getId());
 
         Assertions.assertThat(userReturned.isPresent());
         Assertions.assertThat(userReturned.get()).isEqualTo(userToSave);
+
+        userToSave.setName("new name");
+        dbService.update(userToSave);
+
+        userReturned = dbService.load(userToSave.getId());
+
+        Assertions.assertThat(userReturned.isPresent());
+        Assertions.assertThat(userReturned.get()).isEqualTo(userToSave);
+
+        User oneMoreUser = new User();
+        oneMoreUser.setAge(40L);
+        oneMoreUser.setName("one more user name");
+
+        dbService.createOrUpdate(oneMoreUser);
+
+        userReturned = dbService.load(oneMoreUser.getId());
+
+        Assertions.assertThat(userReturned.isPresent());
+        Assertions.assertThat(userReturned.get()).isEqualTo(oneMoreUser);
+
+        oneMoreUser.setName("new one more user name");
+        dbService.update(oneMoreUser);
+
+        userReturned = dbService.load(oneMoreUser.getId());
+
+        Assertions.assertThat(userReturned.isPresent());
+        Assertions.assertThat(userReturned.get()).isEqualTo(oneMoreUser);
     }
 
     @Test
-    void testThatSaveAndLoadAccountWorkCorrectly() throws SQLException {
+    void testThatCRUOperationsWithAccountWorkCorrectly() throws SQLException {
         createTable(dataSource, CREATE_TABLE_ACCOUNT_SCRIPT);
 
         DbExecutor<User> dbExecutor = new DbExecutor<>();
@@ -83,19 +109,38 @@ class DbServiceUserImplTest {
         SqlGenerator sqlGenerator = new SqlGeneratorImpl(Account.class);
         QueryResultMapper resultMapper = new QueryResultMapperImpl(Account.class);
 
-        EntityDao<Account> userDao = new EntityDaoJdbc<>(sessionManager, dbExecutor, sqlGenerator, resultMapper);
+        EntityDao<Account> entityDao = new EntityDaoJdbc<>(sessionManager, dbExecutor, sqlGenerator, resultMapper);
 
-        DbService<Account> dbService = new DbServiceImpl<>(userDao);
+        DbService<Account> dbService = new DbServiceAccount(entityDao);
 
         Account accountToSave = new Account();
         accountToSave.setType("testAccType");
         accountToSave.setRest(7777777L);
 
-        accountToSave.setNo(dbService.create(accountToSave));
+        dbService.create(accountToSave);
 
         Optional<Account> accountReturned = dbService.load(1l);
 
         Assertions.assertThat(accountReturned.isPresent());
         Assertions.assertThat(accountReturned.get()).isEqualTo(accountToSave);
+
+        Account oneMoreAccount = new Account();
+        oneMoreAccount.setRest(40L);
+        oneMoreAccount.setType("one more account type");
+
+        dbService.createOrUpdate(oneMoreAccount);
+
+        accountReturned = dbService.load(oneMoreAccount.getNo());
+
+        Assertions.assertThat(accountReturned.isPresent());
+        Assertions.assertThat(accountReturned.get()).isEqualTo(oneMoreAccount);
+
+        oneMoreAccount.setType("new one more account type");
+        dbService.update(oneMoreAccount);
+
+        accountReturned = dbService.load(oneMoreAccount.getNo());
+
+        Assertions.assertThat(accountReturned.isPresent());
+        Assertions.assertThat(accountReturned.get()).isEqualTo(oneMoreAccount);
     }
 }
