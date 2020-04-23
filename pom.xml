@@ -18,6 +18,7 @@
 
         <module>L09-annotations</module>
         <module>L11-solid</module>
+        <module>L19-hibernate</module>
     </modules>
 
     <developers>
