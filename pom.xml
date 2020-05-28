@@ -17,6 +17,7 @@
         <module>L09-annotations</module>
         <module>L11-solid</module>
         <module>L13-department</module>
+        <module>L15-json</module>
     </modules>
 
     <developers>
