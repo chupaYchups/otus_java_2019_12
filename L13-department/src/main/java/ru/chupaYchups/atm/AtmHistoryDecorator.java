@@ -8,12 +8,12 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
 
-public class AtmHistoryProxy implements Atm {
+public class AtmHistoryDecorator implements Atm {
 
     private Deque<AtmMemento> history;
     private Atm atm;
 
-    public AtmHistoryProxy(Atm atm) {
+    public AtmHistoryDecorator(Atm atm) {
         this.history = new ArrayDeque<>();
         this.atm = atm;
     }

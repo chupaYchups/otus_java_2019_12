@@ -29,6 +29,6 @@ public class AtmFactory {
     }
 
     private Atm createProxiedAtmObject() {
-        return new AtmHistoryProxy(new OldModelAtm(nominalList));
+        return new AtmHistoryDecorator(new OldModelAtm(nominalList));
     }
 }
