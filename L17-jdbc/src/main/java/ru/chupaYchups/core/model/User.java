@@ -1,10 +1,10 @@
-package ru.chupaYchups.jdbc.orm.model;
+package ru.chupaYchups.core.model;
 
-import ru.chupaYchups.jdbc.orm.annotation.Id;
+import ru.chupaYchups.core.model.annotation.Id;
 
 import java.util.Objects;
 
-public class User {
+public class User implements IdentifiedEntity {
 
     @Id
     private Long id;

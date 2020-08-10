@@ -1,8 +1,10 @@
-package ru.chupaYchups.jdbc.orm.sql_generator;
+package ru.chupaYchups.core.orm.sql_generator;
 
-import ru.chupaYchups.jdbc.orm.visitor.ClassFieldInfo;
-import ru.chupaYchups.jdbc.orm.visitor.CollectFieldInfoVisitor;
+import ru.chupaYchups.core.field_info.ClassFieldInfo;
+import ru.chupaYchups.core.field_info.visitor.ClassFieldVisitor;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,8 +29,20 @@ public class SqlGeneratorImpl<T> implements SqlGenerator<T> {
     private final Class<T> CLS;
     private final String TABLE_NAME;
 
-    public SqlGeneratorImpl(Class<T> cls) {
+    private  ClassFieldVisitor<ClassFieldInfo> visitor;
+
+    private enum SqlStatementType {
+        FIND_BY_ID,
+        INSERT,
+        UPDATE
+    }
+
+    //Кешируем запросы в разрезе одного генератора
+    private Map<SqlStatementType, String> sqlStatementCache = new HashMap<>();
+
+    public SqlGeneratorImpl(Class<T> cls,  ClassFieldVisitor<ClassFieldInfo> visitor) {
         this.CLS = cls;
+        this.visitor = visitor;
         this.TABLE_NAME = CLS.getName().substring(CLS.getName().lastIndexOf(POINT) + 1).toLowerCase();
     }
 
@@ -43,19 +57,21 @@ public class SqlGeneratorImpl<T> implements SqlGenerator<T> {
     }
 
     private SqlOperationInfo<Long> generateFindByIdQuery(Long id) {
-        ClassFieldInfo classFieldInfo = new CollectFieldInfoVisitor().inspectClass(CLS).get();
+
+        ClassFieldInfo classFieldInfo = visitor.inspectClass(CLS).get();
         SqlOperationInfo<Long> info = new SqlOperationInfo();
         Map<String, String> fieldValueMap = classFieldInfo.getFieldValuesMap();
         List<String> paramNameList = new ArrayList<>(fieldValueMap.keySet());
 
-        info.setQuery(new StringBuilder(SELECT_CLAUSE).append(WHITESPACE).
+        info.setQuery(sqlStatementCache.computeIfAbsent(SqlStatementType.FIND_BY_ID, sqlStatementType -> new StringBuilder(SELECT_CLAUSE).append(WHITESPACE).
                 append(paramNameList.stream().collect(Collectors.joining(","))).append(WHITESPACE).
                 append(FROM_CLAUSE).append(WHITESPACE).
                 append(TABLE_NAME).append(WHITESPACE).
                 append(WHERE_CLAUSE).append(WHITESPACE).
                 append(classFieldInfo.getPrimaryKeyFieldName()).append(WHITESPACE).
                 append(EQUALS).append(WHITESPACE).
-                append(QUESTION).toString());
+                append(QUESTION).toString()));
+
         info.setParameter(id);
         info.setParameterNameList(paramNameList);
         info.setPrimaryKeyFieldName(classFieldInfo.getPrimaryKeyFieldName());
@@ -65,12 +81,12 @@ public class SqlGeneratorImpl<T> implements SqlGenerator<T> {
 
     private SqlOperationInfo<List<String>> generateInsertStatement(T obj) {
 
-        ClassFieldInfo classFieldInfo = new CollectFieldInfoVisitor().inspectObject(obj).get();
+        ClassFieldInfo classFieldInfo = visitor.inspectObject(obj).get();
         SqlOperationInfo<List<String>> info = new SqlOperationInfo();
         Map<String, String> fieldValueMap = classFieldInfo.getFieldValuesMap();
         fieldValueMap.remove(classFieldInfo.getPrimaryKeyFieldName());
 
-        info.setQuery(new StringBuilder(INSERT_CLAUSE).append(WHITESPACE).
+        info.setQuery(sqlStatementCache.computeIfAbsent(SqlStatementType.INSERT, sqlStatementType -> new StringBuilder(INSERT_CLAUSE).append(WHITESPACE).
             append(TABLE_NAME).append(WHITESPACE).
             append(LEFT_BRACKET).append(WHITESPACE).
             append(fieldValueMap.keySet().stream().collect(Collectors.joining(","))).append(WHITESPACE).
@@ -78,7 +94,8 @@ public class SqlGeneratorImpl<T> implements SqlGenerator<T> {
             append(VALUES_CLAUSE).
             append(LEFT_BRACKET).append(WHITESPACE).
             append(fieldValueMap.keySet().stream().map(s -> "?").collect(Collectors.joining(","))).append(WHITESPACE).
-            append(RIGHT_BRACKET).toString());
+            append(RIGHT_BRACKET).toString()));
+
         info.setParameter(fieldValueMap.values().stream().collect(Collectors.toList()));
         info.setPrimaryKeyFieldName(classFieldInfo.getPrimaryKeyFieldName());
 
@@ -88,12 +105,12 @@ public class SqlGeneratorImpl<T> implements SqlGenerator<T> {
     @Override
     public SqlOperationInfo<List<String>> getUpdateStatement(T object) {
 
-        ClassFieldInfo classFieldInfo = new CollectFieldInfoVisitor().inspectObject(object).get();
+        ClassFieldInfo classFieldInfo = visitor.inspectObject(object).get();
         SqlOperationInfo<List<String>> info = new SqlOperationInfo<>();
         Map<String, String> fieldValueMap = classFieldInfo.getFieldValuesMap();
         String primaryKeyValue = fieldValueMap.remove(classFieldInfo.getPrimaryKeyFieldName());
 
-        info.setQuery(new StringBuilder(UPDATE_CLAUSE).append(WHITESPACE).
+        info.setQuery(sqlStatementCache.computeIfAbsent(SqlStatementType.UPDATE, sqlStatementType -> new StringBuilder(UPDATE_CLAUSE).append(WHITESPACE).
             append(TABLE_NAME).append(WHITESPACE).
             append(SET).append(WHITESPACE).
             append(fieldValueMap.keySet().stream().
@@ -102,8 +119,7 @@ public class SqlGeneratorImpl<T> implements SqlGenerator<T> {
             append(WHERE_CLAUSE).append(WHITESPACE).
             append(classFieldInfo.getPrimaryKeyFieldName()).append(WHITESPACE).
             append(EQUALS).append(WHITESPACE).
-            append(QUESTION).toString());
-
+            append(QUESTION).toString()));
 
         List<String> parameterValueList = fieldValueMap.values().stream().collect(Collectors.toList());
         parameterValueList.add(primaryKeyValue);
@@ -111,35 +127,4 @@ public class SqlGeneratorImpl<T> implements SqlGenerator<T> {
 
         return info;
     }
-
-
-    /*    private String getFieldListString(List<String> fields, boolean withPrimaryKey) {
-        var stream = classFieldInfo.getFieldValuesMap().keySet().stream();
-        if (!withPrimaryKey) {
-            stream = stream.filter(s -> !classFieldInfo.getPrimaryKeyFieldName().equals(s));
-        }
-        return stream.collect(Collectors.joining(COMMA));
-    }
-
-    private String maskFieldsWithQuestion(List<String> fields) {
-        return fields.stream().map(s -> "?").collect(Collectors.joining(","));
-    }*/
-
-/*    private String getFieldNamesString(Map<String, String> fieldValues, String primaryKeyFieldName, boolean maskQuestion, boolean withPrimaryKey) {
-        Stream<String> stream = fieldValues.keySet().stream();
-        if (!withPrimaryKey) {
-            stream.filter(s -> {!s.equals(primaryKeyFieldName)});
-        }
-        if (maskQuestion) {
-            stream.map(s -> "?");
-        }
-        return stream.collect(Collectors.joining(","));
-    }
-
-    private String getFieldValuesString(Map<String, String> fieldValues, String primaryKeyFieldName) {
-        return fieldValues.values().stream().
-            map(stringStringEntry -> stringStringEntry.getValue()).
-            collect(Collectors.joining(","));
-    }*/
-
 }

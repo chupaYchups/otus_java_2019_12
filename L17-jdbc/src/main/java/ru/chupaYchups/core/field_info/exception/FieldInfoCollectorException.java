@@ -1,4 +1,4 @@
-package ru.chupaYchups.jdbc.orm.visitor.exception;
+package ru.chupaYchups.core.field_info.exception;
 
 public class FieldInfoCollectorException extends RuntimeException {
     public FieldInfoCollectorException(String message) {

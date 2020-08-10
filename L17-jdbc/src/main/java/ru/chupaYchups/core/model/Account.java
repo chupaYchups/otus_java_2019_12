@@ -1,15 +1,26 @@
-package ru.chupaYchups.jdbc.orm.model;
+package ru.chupaYchups.core.model;
 
-import ru.chupaYchups.jdbc.orm.annotation.Id;
+import ru.chupaYchups.core.model.annotation.Id;
 
 import java.util.Objects;
 
-public class Account {
+public class Account implements IdentifiedEntity{
 
     @Id
     private Long no;
     private String type;
     private Long rest;
+
+
+    @Override
+    public Long getId() {
+        return no;
+    }
+
+    @Override
+    public void setId(Long id) {
+        no = id;
+    }
 
     public Long getNo() {
         return no;

@@ -1,4 +1,4 @@
-package ru.chupaYchups.jdbc.orm.visitor;
+package ru.chupaYchups.core.field_info.visitor;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;

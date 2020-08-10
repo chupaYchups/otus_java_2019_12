@@ -1,4 +1,4 @@
-package ru.chupaYchups.jdbc.orm.sql_generator;
+package ru.chupaYchups.core.orm.sql_generator;
 
 import java.util.List;
 

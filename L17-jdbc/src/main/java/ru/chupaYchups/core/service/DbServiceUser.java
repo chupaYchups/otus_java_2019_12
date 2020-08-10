@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.chupaYchups.core.dao.EntityDao;
 import ru.chupaYchups.core.sessionmanager.SessionManager;
-import ru.chupaYchups.jdbc.orm.model.User;
+import ru.chupaYchups.core.model.User;
 
 import java.util.Optional;
 

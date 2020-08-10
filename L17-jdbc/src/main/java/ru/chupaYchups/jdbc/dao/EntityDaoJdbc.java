@@ -7,8 +7,8 @@ import ru.chupaYchups.core.dao.UserDaoException;
 import ru.chupaYchups.core.sessionmanager.SessionManager;
 import ru.chupaYchups.jdbc.DbExecutor;
 import ru.chupaYchups.jdbc.orm.result_mapper.QueryResultMapper;
-import ru.chupaYchups.jdbc.orm.sql_generator.SqlGenerator;
-import ru.chupaYchups.jdbc.orm.sql_generator.SqlOperationInfo;
+import ru.chupaYchups.core.orm.sql_generator.SqlGenerator;
+import ru.chupaYchups.core.orm.sql_generator.SqlOperationInfo;
 import ru.chupaYchups.jdbc.sessionmanager.SessionManagerJdbc;
 
 import java.lang.reflect.Field;
@@ -25,21 +25,21 @@ public class EntityDaoJdbc<T> implements EntityDao<T> {
   private final QueryResultMapper<T> resultMapper;
 
   public EntityDaoJdbc(SessionManagerJdbc sessionManager, DbExecutor<T> dbExecutor, SqlGenerator<T> sqlGenerator, QueryResultMapper<T> resultMapper) {
-    this.sessionManager = sessionManager;
-    this.dbExecutor = dbExecutor;
-    this.sqlGenerator = sqlGenerator;
-    this.resultMapper = resultMapper;
+      this.sessionManager = sessionManager;
+      this.dbExecutor = dbExecutor;
+      this.sqlGenerator = sqlGenerator;
+      this.resultMapper = resultMapper;
   }
 
 
   @Override
   public Optional<T> findById(long id) {
     try {
-      SqlOperationInfo<Long> operationInfo = sqlGenerator.getFindByIdQuery(id);
-      return dbExecutor.selectRecord(getConnection(), operationInfo.getQuery(),
-          operationInfo.getParameter(), resultSet -> resultMapper.mapResultToObject(resultSet, operationInfo.getParameterNameList()));
+        SqlOperationInfo<Long> operationInfo = sqlGenerator.getFindByIdQuery(id);
+        return dbExecutor.selectRecord(getConnection(), operationInfo.getQuery(),
+        operationInfo.getParameter(), resultSet -> resultMapper.mapResultToObject(resultSet, operationInfo.getParameterNameList()));
     } catch (Exception e) {
-      logger.error(e.getMessage(), e);
+        logger.error(e.getMessage(), e);
     }
     return Optional.empty();
   }
@@ -48,30 +48,30 @@ public class EntityDaoJdbc<T> implements EntityDao<T> {
   @Override
   public long save(T entity) {
     try {
-      SqlOperationInfo<List<String>> operationInfo = sqlGenerator.getInsertStatement(entity);
-      long id = dbExecutor.insertRecord(getConnection(), operationInfo.getQuery(), operationInfo.getParameter());
-      updatePrimaryKey(entity, operationInfo, id);
-      return id;
+        SqlOperationInfo<List<String>> operationInfo = sqlGenerator.getInsertStatement(entity);
+        long id = dbExecutor.insertRecord(getConnection(), operationInfo.getQuery(), operationInfo.getParameter());
+        updatePrimaryKey(entity, operationInfo, id);
+        return id;
     } catch (Exception e) {
-      logger.error(e.getMessage(), e);
-      throw new UserDaoException(e);
+        logger.error(e.getMessage(), e);
+        throw new UserDaoException(e);
     }
   }
 
   private void updatePrimaryKey(T entity, SqlOperationInfo<List<String>> operationInfo, long id) throws IllegalAccessException, NoSuchFieldException {
-    Field primaryKeyField = entity.getClass().getDeclaredField(operationInfo.getPrimaryKeyFieldName());
-    primaryKeyField.setAccessible(true);
-    primaryKeyField.set(entity, id);
+      Field primaryKeyField = entity.getClass().getDeclaredField(operationInfo.getPrimaryKeyFieldName());
+      primaryKeyField.setAccessible(true);
+      primaryKeyField.set(entity, id);
   }
 
   @Override
   public void update(T entity) {
     try {
-      SqlOperationInfo<List<String>> operationInfo = sqlGenerator.getUpdateStatement(entity);
-      dbExecutor.insertRecord(getConnection(), operationInfo.getQuery(), operationInfo.getParameter());
+        SqlOperationInfo<List<String>> operationInfo = sqlGenerator.getUpdateStatement(entity);
+        dbExecutor.insertRecord(getConnection(), operationInfo.getQuery(), operationInfo.getParameter());
     } catch (Exception e) {
-      logger.error(e.getMessage(), e);
-      throw new UserDaoException(e);
+        logger.error(e.getMessage(), e);
+        throw new UserDaoException(e);
     }
   }
 

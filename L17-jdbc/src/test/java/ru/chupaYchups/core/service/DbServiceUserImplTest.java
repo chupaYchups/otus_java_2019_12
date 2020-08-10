@@ -4,15 +4,17 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.chupaYchups.core.dao.EntityDao;
+import ru.chupaYchups.core.field_info.visitor.ClassFieldVisitor;
+import ru.chupaYchups.core.field_info.visitor.CollectFieldInfoVisitor;
+import ru.chupaYchups.core.model.Account;
+import ru.chupaYchups.core.model.User;
+import ru.chupaYchups.core.orm.sql_generator.SqlGenerator;
+import ru.chupaYchups.core.orm.sql_generator.SqlGeneratorImpl;
 import ru.chupaYchups.h2.DataSourceH2;
 import ru.chupaYchups.jdbc.DbExecutor;
 import ru.chupaYchups.jdbc.dao.EntityDaoJdbc;
-import ru.chupaYchups.jdbc.orm.model.Account;
-import ru.chupaYchups.jdbc.orm.model.User;
 import ru.chupaYchups.jdbc.orm.result_mapper.QueryResultMapper;
 import ru.chupaYchups.jdbc.orm.result_mapper.QueryResultMapperImpl;
-import ru.chupaYchups.jdbc.orm.sql_generator.SqlGenerator;
-import ru.chupaYchups.jdbc.orm.sql_generator.SqlGeneratorImpl;
 import ru.chupaYchups.jdbc.sessionmanager.SessionManagerJdbc;
 
 import javax.sql.DataSource;
@@ -54,12 +56,13 @@ class DbServiceUserImplTest {
         createTable(dataSource, CREATE_TABLE_USER_SCRIPT);
         DbExecutor<User> dbExecutor = new DbExecutor<>();
 
-        SqlGenerator sqlGenerator = new SqlGeneratorImpl(User.class);
+        ClassFieldVisitor visitor = new CollectFieldInfoVisitor();
+        SqlGenerator sqlGenerator = new SqlGeneratorImpl(User.class, visitor);
         QueryResultMapper resultMapper = new QueryResultMapperImpl(User.class);
 
         EntityDao<User> userDao = new EntityDaoJdbc<>(sessionManager, dbExecutor, sqlGenerator, resultMapper);
 
-        DbService<User> dbService = new DbServiceUser(userDao);
+        DbService<User> dbService = /*new DbServiceUser(userDao);*/ new DbServiceImpl<>(userDao);
 
         User userToSave = new User();
         userToSave.setAge(30L);
@@ -106,12 +109,13 @@ class DbServiceUserImplTest {
 
         DbExecutor<User> dbExecutor = new DbExecutor<>();
 
-        SqlGenerator sqlGenerator = new SqlGeneratorImpl(Account.class);
+        ClassFieldVisitor visitor = new CollectFieldInfoVisitor();
+        SqlGenerator sqlGenerator = new SqlGeneratorImpl(Account.class, visitor);
         QueryResultMapper resultMapper = new QueryResultMapperImpl(Account.class);
 
         EntityDao<Account> entityDao = new EntityDaoJdbc<>(sessionManager, dbExecutor, sqlGenerator, resultMapper);
 
-        DbService<Account> dbService = new DbServiceAccount(entityDao);
+        DbService<Account> dbService = /*new DbServiceAccount(entityDao);*/ new DbServiceImpl<>(entityDao);
 
         Account accountToSave = new Account();
         accountToSave.setType("testAccType");

@@ -1,4 +1,4 @@
-package ru.chupaYchups.jdbc.orm.annotation;
+package ru.chupaYchups.core.model.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

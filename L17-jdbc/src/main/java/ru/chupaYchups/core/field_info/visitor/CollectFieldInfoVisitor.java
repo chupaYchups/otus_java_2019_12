@@ -1,7 +1,8 @@
-package ru.chupaYchups.jdbc.orm.visitor;
+package ru.chupaYchups.core.field_info.visitor;
 
-import ru.chupaYchups.jdbc.orm.annotation.Id;
-import ru.chupaYchups.jdbc.orm.visitor.exception.FieldInfoCollectorException;
+import ru.chupaYchups.core.field_info.ClassFieldInfo;
+import ru.chupaYchups.core.model.annotation.Id;
+import ru.chupaYchups.core.field_info.exception.FieldInfoCollectorException;
 
 import java.lang.reflect.Field;
 import java.util.List;

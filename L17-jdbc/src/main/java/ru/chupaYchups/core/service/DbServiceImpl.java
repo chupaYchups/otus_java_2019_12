@@ -3,23 +3,23 @@ package ru.chupaYchups.core.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.chupaYchups.core.dao.EntityDao;
+import ru.chupaYchups.core.model.IdentifiedEntity;
 import ru.chupaYchups.core.sessionmanager.SessionManager;
-import ru.chupaYchups.core.model.Account;
 
 import java.util.Optional;
 
-public class DbServiceAccount implements DbService<Account> {
+public class DbServiceImpl<T extends IdentifiedEntity> implements DbService<T> {
 
     private static Logger logger = LoggerFactory.getLogger(DbServiceAccount.class);
 
-    private final EntityDao<Account> entityDao;
+    private final EntityDao<T> entityDao;
 
-    public DbServiceAccount(EntityDao<Account> userDao) {
+    public DbServiceImpl(EntityDao<T> userDao) {
         this.entityDao = userDao;
     }
 
     @Override
-    public void create(Account account) {
+    public void create(T account) {
         try (SessionManager sessionManager = entityDao.getSessionManager()) {
             sessionManager.beginSession();
             try {
@@ -36,11 +36,11 @@ public class DbServiceAccount implements DbService<Account> {
 
 
     @Override
-    public Optional<Account> load(long id) {
+    public Optional<T> load(long id) {
         try (SessionManager sessionManager = entityDao.getSessionManager()) {
             sessionManager.beginSession();
             try {
-                Optional<Account> entityOptional = entityDao.findById(id);
+                Optional<T> entityOptional = entityDao.findById(id);
                 logger.info("account: {}", entityOptional.orElse(null));
                 return entityOptional;
             } catch (Exception e) {
@@ -52,7 +52,7 @@ public class DbServiceAccount implements DbService<Account> {
     }
 
     @Override
-    public void update(Account account) {
+    public void update(T account) {
         try (SessionManager sessionManager = entityDao.getSessionManager()) {
             sessionManager.beginSession();
             try {
@@ -68,11 +68,11 @@ public class DbServiceAccount implements DbService<Account> {
     }
 
     @Override
-    public void createOrUpdate(Account account) {
+    public void createOrUpdate(T account) {
         try (SessionManager sessionManager = entityDao.getSessionManager()) {
             sessionManager.beginSession();
             try {
-                if (account.getNo() != null) {
+                if (account.getId() != null) {
                     entityDao.update(account);
                     logger.info("updated account: {}", account);
                 } else {

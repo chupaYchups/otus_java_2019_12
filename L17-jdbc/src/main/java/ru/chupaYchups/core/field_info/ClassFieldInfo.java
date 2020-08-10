@@ -1,4 +1,4 @@
-package ru.chupaYchups.jdbc.orm.visitor;
+package ru.chupaYchups.core.field_info;
 
 import java.util.NavigableMap;
 import java.util.TreeMap;
