@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public class DbServiceImpl<T extends IdentifiedEntity> implements DbService<T> {
 
-    private static Logger logger = LoggerFactory.getLogger(DbServiceAccount.class);
+    private static Logger logger = LoggerFactory.getLogger(DbServiceImpl.class);
 
     private final EntityDao<T> entityDao;
 
