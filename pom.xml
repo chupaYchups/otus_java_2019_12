@@ -18,6 +18,7 @@
         <module>L11-solid</module>
         <module>L13-department</module>
         <module>L15-json</module>
+        <module>L17-jdbc</module>
         <module>L19-hibernate</module>
     </modules>
 
