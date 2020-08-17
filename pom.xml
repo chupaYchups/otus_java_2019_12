@@ -20,6 +20,7 @@
         <module>L15-json</module>
         <module>L17-jdbc</module>
         <module>L19-hibernate</module>
+        <module>L21-cacheEngine</module>
     </modules>
 
     <developers>
