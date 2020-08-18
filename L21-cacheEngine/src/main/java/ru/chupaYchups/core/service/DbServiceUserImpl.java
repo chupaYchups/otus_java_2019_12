@@ -9,7 +9,9 @@ import ru.chupaYchups.core.dao.UserDao;
 import ru.chupaYchups.core.model.User;
 import ru.chupaYchups.core.sessionmanager.SessionManager;
 
+import java.util.ArrayList;
 import java.util.Optional;
+import java.util.WeakHashMap;
 
 public class DbServiceUserImpl implements DBServiceUser {
 
@@ -21,7 +23,7 @@ public class DbServiceUserImpl implements DBServiceUser {
 
     public DbServiceUserImpl(UserDao userDao) {
         this.userDao = userDao;
-        this.cache = new MyCache<>();
+        this.cache = new MyCache<>(new WeakHashMap<>(), new ArrayList<>());
     }
 
     @Override

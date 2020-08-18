@@ -9,37 +9,36 @@ import java.util.Map;
  */
 public class MyCache<K, V> implements HwCache<K, V> {
 
+    private Map<K, V> cacheMap;
+    private List<HwListener<K, V>> listenerList;
+
     public MyCache(Map<K, V> cacheMap, List<HwListener<K, V>> listenerList) {
         this.cacheMap = cacheMap;
         this.listenerList = listenerList;
     }
 
-    private Map<K, V> cacheMap;
-
-    private List<HwListener<K, V>> listenerList;
-
     @Override
     public void put(K key, V value) {
-
+        cacheMap.put(key, value);
     }
 
     @Override
     public void remove(K key) {
-
+        cacheMap.remove(key);
     }
 
     @Override
     public V get(K key) {
-        return null;
+        return cacheMap.get(key);
     }
 
     @Override
     public void addListener(HwListener<K, V> listener) {
-
+        listenerList.add(listener);
     }
 
     @Override
     public void removeListener(HwListener<K, V> listener) {
-
+        listenerList.remove(listener);
     }
 }
