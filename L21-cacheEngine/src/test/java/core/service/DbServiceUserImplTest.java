@@ -7,6 +7,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import ru.chupaYchups.cachehw.HwCache;
 import ru.chupaYchups.core.dao.UserDao;
 import ru.chupaYchups.core.model.User;
 import ru.chupaYchups.core.service.DbServiceException;
@@ -15,14 +18,14 @@ import ru.chupaYchups.core.sessionmanager.SessionManager;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @DisplayName("Сервис для работы с пользователями в рамках БД должен ")
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class DbServiceUserImplTest {
 
     private static final long USER_ID = 1L;
@@ -33,6 +36,9 @@ class DbServiceUserImplTest {
     @Mock
     private UserDao userDao;
 
+    @Mock
+    private HwCache<String, User> cache;
+
     private DbServiceUserImpl dbServiceUser;
 
     private InOrder inOrder;
@@ -40,8 +46,8 @@ class DbServiceUserImplTest {
     @BeforeEach
     void setUp() {
         given(userDao.getSessionManager()).willReturn(sessionManager);
-        inOrder = inOrder(userDao, sessionManager);
-        dbServiceUser = new DbServiceUserImpl(userDao);
+        inOrder = inOrder(userDao, sessionManager, cache);
+        dbServiceUser = new DbServiceUserImpl(userDao, cache);
     }
 
     @Test
@@ -60,11 +66,14 @@ class DbServiceUserImplTest {
     @Test
     @DisplayName(" при сохранении пользователя, открывать и коммитить транзакцию в нужном порядке")
     void shouldCorrectSaveUserAndOpenAndCommitTranInExpectedOrder() {
-        dbServiceUser.saveUser(new User());
+        User user = new User(1L, "testUserName");
+
+        dbServiceUser.saveUser(user);
 
         inOrder.verify(userDao, times(1)).getSessionManager();
         inOrder.verify(sessionManager, times(1)).beginSession();
         inOrder.verify(sessionManager, times(1)).commitSession();
+        inOrder.verify(cache, times(1)).put(Long.toString(user.getId()), user);
         inOrder.verify(sessionManager, never()).rollbackSession();
     }
 
@@ -81,15 +90,37 @@ class DbServiceUserImplTest {
         inOrder.verify(sessionManager, times(1)).beginSession();
         inOrder.verify(sessionManager, times(1)).rollbackSession();
         inOrder.verify(sessionManager, never()).commitSession();
+        inOrder.verify(cache, never()).put(any(), any());
     }
 
     @Test
-    @DisplayName(" корректно загружать пользователя по заданному id")
-    void shouldLoadCorrectUserById() {
+    @DisplayName(" корректно загружать закешированного пользователя по заданному id")
+    void shouldLoadCorrectCachedUserById() {
         User expectedUser = new User(USER_ID, "Вася");
-        given(userDao.findById(USER_ID)).willReturn(Optional.of(expectedUser));
-        Optional<User> mayBeUser = dbServiceUser.getUser(USER_ID);
-        assertThat(mayBeUser).isPresent().get().isEqualToComparingFieldByField(expectedUser);
+        final String expectedUserIdString = Long.toString(USER_ID);
+        given(cache.get(expectedUserIdString)).willReturn(expectedUser);
 
+        Optional<User> mayBeUser = dbServiceUser.getUser(USER_ID);
+
+        inOrder.verify(cache, times(1)).get(any());
+        inOrder.verify(userDao, never()).findById(anyLong());
+
+        assertThat(mayBeUser).isPresent().get().isEqualToComparingFieldByField(expectedUser);
+    }
+
+    @Test
+    @DisplayName(" корректно загружать незакешированного пользователя по заданному id")
+    void shouldLoadCorrectNotCachedUserById() {
+        User expectedUser = new User(USER_ID, "Вася");
+        final String expectedUserIdString = Long.toString(USER_ID);
+        given(cache.get(expectedUserIdString)).willReturn(null);
+        given(userDao.findById(USER_ID)).willReturn(Optional.of(expectedUser));
+
+        Optional<User> mayBeUser = dbServiceUser.getUser(USER_ID);
+
+        inOrder.verify(cache, times(1)).get(expectedUserIdString);
+        inOrder.verify(userDao, times(1)).findById(USER_ID);
+
+        assertThat(mayBeUser).isPresent().get().isEqualToComparingFieldByField(expectedUser);
     }
 }

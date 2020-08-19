@@ -18,7 +18,7 @@ public class User {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     //@JoinColumn(name = "userId")
-    private List<Phone> phone;
+    private List<Phone> phones;
 
     @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
     //@JoinColumn(name="userId")
@@ -49,12 +49,12 @@ public class User {
 
     }
 
-    public List<Phone> getPhone() {
-        return phone;
+    public List<Phone> getPhones() {
+        return phones;
     }
 
-    public void setPhone(List<Phone> phone) {
-        this.phone = phone;
+    public void setPhones(List<Phone> phones) {
+        this.phones = phones;
     }
 
     public Address getAddress() {

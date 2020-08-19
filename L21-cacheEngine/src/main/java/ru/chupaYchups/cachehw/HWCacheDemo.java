@@ -11,11 +11,11 @@ public class HWCacheDemo {
     private static final Logger logger = LoggerFactory.getLogger(HWCacheDemo.class);
 
     public static void main(String[] args) {
-        new HWCacheDemo().demo();
+        //new HWCacheDemo().demo();
     }
 
     private void demo() {
-        HwCache<Integer, Integer> cache = new MyCache<>();
+/*        HwCache<Integer, Integer> cache = new MyCache<>();
 
         // пример, когда Idea предлагает упростить код, при этом может появиться "спец"-эффект
         HwListener<Integer, Integer> listener = new HwListener<Integer, Integer>() {
@@ -30,6 +30,6 @@ public class HWCacheDemo {
 
         logger.info("getValue:{}", cache.get(1));
         cache.remove(1);
-        cache.removeListener(listener);
+        cache.removeListener(listener);*/
     }
 }

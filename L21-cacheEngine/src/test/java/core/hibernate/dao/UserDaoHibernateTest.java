@@ -51,7 +51,7 @@ class UserDaoHibernateTest {
         User testUser = new User(ZERO_ID, TEST_USER_NAME);
         Phone phone = new Phone(testUser, TEST_PHONE_01);
         Address address = new Address(testUser, TEST_ADDRESS_MAYAK);
-        testUser.setPhone(Arrays.asList(phone));
+        testUser.setPhones(Arrays.asList(phone));
         testUser.setAddress(address);
 
         sessionManagerHibernate.beginSession();
@@ -59,13 +59,13 @@ class UserDaoHibernateTest {
         Optional<User> foundUserOptional = userDaoHibernate.findById(testUser.getId());
         assertThat(foundUserOptional).isPresent();
         User user = foundUserOptional.get();
-        Hibernate.initialize(user.getPhone());
+        Hibernate.initialize(user.getPhones());
         Hibernate.initialize(user.getAddress());
         sessionManagerHibernate.commitSession();
 
         assertThat(user).isEqualTo(testUser);
-        assertThat(user.getPhone()).isNotEmpty().hasSize(1);
-        assertThat(user.getPhone().get(0)).isEqualTo(testUser.getPhone().get(0));
+        assertThat(user.getPhones()).isNotEmpty().hasSize(1);
+        assertThat(user.getPhones().get(0)).isEqualTo(testUser.getPhones().get(0));
         assertThat(user.getAddress()).isEqualTo(testUser.getAddress());
     }
 
@@ -78,7 +78,7 @@ class UserDaoHibernateTest {
         Phone phone2 = new Phone(testUser, TEST_PHONE_02);
         Address address = new Address(testUser, TEST_ADDRESS_MAYAK);
         testUser.setAddress(address);
-        testUser.setPhone(Arrays.asList(phone1, phone2));
+        testUser.setPhones(Arrays.asList(phone1, phone2));
 
         sessionManagerHibernate.beginSession();
         userDaoHibernate.insertOrUpdate(testUser);
@@ -97,7 +97,7 @@ class UserDaoHibernateTest {
         testUser.setName(TEST_USER_UPDATED_NAME);
         sessionManagerHibernate.beginSession();
         testUser.getAddress().setStreet("Новые Васюки");
-        testUser.getPhone().get(0).setNumber(TEST_PHONE_03);
+        testUser.getPhones().get(0).setNumber(TEST_PHONE_03);
         userDaoHibernate.insertOrUpdate(testUser);
         sessionManagerHibernate.commitSession();
 
@@ -109,7 +109,7 @@ class UserDaoHibernateTest {
 
         assertThat(testUser.getName()).isEqualTo(TEST_USER_UPDATED_NAME);
         assertThat(testUser.getAddress().getStreet()).isEqualTo(TEST_ADDRESS_NEW_VASUIKI);
-        assertThat(testUser.getPhone().get(0).getNumber()).isEqualTo(TEST_PHONE_03);
+        assertThat(testUser.getPhones().get(0).getNumber()).isEqualTo(TEST_PHONE_03);
     }
 
     @DisplayName("возвращать менеджер сессий")
@@ -129,7 +129,7 @@ class UserDaoHibernateTest {
     private User loadUser(long userId) {
         try (Session session = sessionFactory.openSession()) {
             User user = session.find(User.class, userId);
-            Hibernate.initialize(user.getPhone());
+            Hibernate.initialize(user.getPhones());
             Hibernate.initialize(user.getAddress());
             return user;
         }
