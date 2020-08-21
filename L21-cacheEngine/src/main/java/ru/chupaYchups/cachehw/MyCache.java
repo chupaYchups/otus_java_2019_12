@@ -9,6 +9,10 @@ import java.util.Map;
  */
 public class MyCache<K, V> implements HwCache<K, V> {
 
+    public static final String PUT = "PUT";
+    public static final String REMOVE = "REMOVE";
+    public static final String GET = "GET";
+
     private Map<K, V> cacheMap;
     private List<HwListener<K, V>> listenerList;
 
@@ -20,16 +24,20 @@ public class MyCache<K, V> implements HwCache<K, V> {
     @Override
     public void put(K key, V value) {
         cacheMap.put(key, value);
+        listenerList.forEach(kvHwListener -> kvHwListener.notify(key, value, PUT));
     }
 
     @Override
     public void remove(K key) {
-        cacheMap.remove(key);
+        V value = cacheMap.remove(key);
+        listenerList.forEach(kvHwListener -> kvHwListener.notify(key, value, REMOVE));
     }
 
     @Override
     public V get(K key) {
-        return cacheMap.get(key);
+        V value = cacheMap.get(key);
+        listenerList.forEach(kvHwListener -> kvHwListener.notify(key, value, GET));
+        return value;
     }
 
     @Override

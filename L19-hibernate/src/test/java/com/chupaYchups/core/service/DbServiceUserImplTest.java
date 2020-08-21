@@ -28,7 +28,7 @@ class DbServiceUserImplTest {
     @Mock
     private UserDao userDao;
 
-    private DbServiceUserImpl dbServiceUser;
+    private DbServiceUserHibernateImpl dbServiceUser;
 
     private InOrder inOrder;
 
@@ -36,7 +36,7 @@ class DbServiceUserImplTest {
     void setUp() {
         given(userDao.getSessionManager()).willReturn(sessionManager);
         inOrder = inOrder(userDao, sessionManager);
-        dbServiceUser = new DbServiceUserImpl(userDao);
+        dbServiceUser = new DbServiceUserHibernateImpl(userDao);
     }
 
     @Test

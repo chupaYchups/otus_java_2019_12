@@ -25,7 +25,7 @@ public class DbServiceUserImpl implements DBServiceUser {
 
     @Override
     public long saveUser(User user) {
-        try (SessionManager sessionManager = userDao.getSessionManager()) {
+         try (SessionManager sessionManager = userDao.getSessionManager()) {
             sessionManager.beginSession();
             try {
                 userDao.insertOrUpdate(user);
