@@ -21,8 +21,8 @@ import ru.chupaYchups.core.model.User;
 import ru.chupaYchups.core.service.DBServiceUser;
 import ru.chupaYchups.core.service.DbServiceUserImpl;
 import static org.mockito.Mockito.*;
-
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,6 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Проверяем что класс сервиса")
 public class DbServiceUserIntegrationTest {
 
+    public static final String TEST_USER_NAME = "testUserName";
     private static Logger logger = LoggerFactory.getLogger(DbServiceUserIntegrationTest.class);
 
     private DBServiceUser dbServiceUser;
@@ -141,17 +142,17 @@ public class DbServiceUserIntegrationTest {
     */
     @Test
     @DisplayName("с кешем работает быстрее чем без кеша")
-    void shouldWorkFasterWithCache() {
+    void shouldWorkFasterWithCache() throws InterruptedException {
+        Thread.sleep(TimeUnit.SECONDS.toMillis(2));
         long cachedDurability = doTheHardSaveAndGetWork(dbServiceUser);
 
-        HwCache cache = Mockito.mock(HwCache.class);
-
+        HwCache mockedCache = Mockito.mock(HwCache.class);
         UserDaoHibernate userDaoHibernate = new UserDaoHibernate(sessionManagerHibernate);
-        DBServiceUser nonCachedService = new DbServiceUserImpl(userDaoHibernate, cache);
+        DBServiceUser nonCachedService = new DbServiceUserImpl(userDaoHibernate, mockedCache);
 
-        Mockito.when(cache.get(anyLong())).thenReturn(null);
+        Mockito.when(mockedCache.get(anyLong())).thenReturn(null);
 
-        long nonCachedDurability = doTheHardSaveAndGetWork(dbServiceUser);
+        long nonCachedDurability = doTheHardSaveAndGetWork(nonCachedService);
 
         logger.info("nonCachedDurability : " + nonCachedDurability + ", cachedDurability : " + cachedDurability);
         assertThat(nonCachedDurability).isGreaterThan(cachedDurability);
@@ -161,7 +162,7 @@ public class DbServiceUserIntegrationTest {
         final int TEST_USER_QTY = 100;
         long startTime = System.nanoTime();
         IntStream.range(1, TEST_USER_QTY).forEach(value -> {
-            User user = new User(0, "testUserName" + value);
+            User user = new User(0, TEST_USER_NAME + value);
             dbServiceUser.saveUser(user);
         });
         IntStream.range(1, TEST_USER_QTY).forEach(value -> {
