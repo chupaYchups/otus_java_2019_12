@@ -5,11 +5,12 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import ru.chupaYchups.core.dao.UserDao;
+import ru.chupaYchups.core.service.DBServiceUser;
 import ru.chupaYchups.web.services.TemplateProcessor;
 import ru.chupaYchups.web.services.UserAuthService;
 import ru.chupaYchups.web.servlet.AuthorizationFilter;
 import ru.chupaYchups.web.servlet.LoginServlet;
+
 import java.util.Arrays;
 
 public class UsersWebServerWithFilterBasedSecurity extends UsersWebServerSimple {
@@ -17,10 +18,10 @@ public class UsersWebServerWithFilterBasedSecurity extends UsersWebServerSimple 
 
     public UsersWebServerWithFilterBasedSecurity(int port,
                                                  UserAuthService authService,
-                                                 UserDao userDao,
+                                                 DBServiceUser dbServiceUser,
                                                  Gson gson,
                                                  TemplateProcessor templateProcessor) {
-        super(port, userDao, gson, templateProcessor);
+        super(port, dbServiceUser, gson, templateProcessor);
         this.authService = authService;
     }
 

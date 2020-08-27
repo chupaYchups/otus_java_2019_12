@@ -33,13 +33,13 @@ public class UserDaoHibernate implements UserDao {
     }
 
     @Override
-    public Optional<User> findByLogin(String userName) {
+    public Optional<User> findByLogin(String login) {
         DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
         try {
             return Optional.ofNullable(currentSession.
                 getHibernateSession().
-                createQuery("select u from user where u.name = ?", User.class).
-                setParameter(1, userName).
+                createQuery("select u from User u where u.login = ?1", User.class).
+                setParameter(1, login).
                 getSingleResult());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

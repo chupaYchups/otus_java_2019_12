@@ -1,24 +1,16 @@
 package server;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.chupaYchups.core.dao.UserDao;
 import ru.chupaYchups.core.model.User;
 import ru.chupaYchups.web.server.UsersWebServer;
-import ru.chupaYchups.web.server.UsersWebServerWithFilterBasedSecurity;
-import ru.chupaYchups.web.services.TemplateProcessor;
-import ru.chupaYchups.web.services.UserAuthService;
 
 import java.net.HttpCookie;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 import static server.utils.HttpUrlConnectionHelper.buildUrl;
 import static server.utils.WebServerHelper.login;
 
@@ -40,17 +32,17 @@ class UsersWebServerImplTest {
 
     @BeforeAll
     static void setUp() throws Exception {
-        TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
-        UserDao userDao = mock(UserDao.class);
-        UserAuthService userAuthService = mock(UserAuthService.class);
-
-        given(userAuthService.authenticate(DEFAULT_USER_LOGIN, DEFAULT_USER_PASSWORD)).willReturn(true);
-        given(userAuthService.authenticate(INCORRECT_USER_LOGIN, DEFAULT_USER_PASSWORD)).willReturn(false);
-        given(userDao.findById(DEFAULT_USER_ID)).willReturn(Optional.of(DEFAULT_USER));
-
-        gson = new GsonBuilder().serializeNulls().create();
-        webServer = new UsersWebServerWithFilterBasedSecurity(WEB_SERVER_PORT, userAuthService, userDao, gson, templateProcessor);
-        webServer.start();
+//        TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
+//        UserDao userDao = mock(UserDao.class);
+//        UserAuthService userAuthService = mock(UserAuthService.class);
+//
+//        given(userAuthService.authenticate(DEFAULT_USER_LOGIN, DEFAULT_USER_PASSWORD)).willReturn(true);
+//        given(userAuthService.authenticate(INCORRECT_USER_LOGIN, DEFAULT_USER_PASSWORD)).willReturn(false);
+//        given(userDao.findById(DEFAULT_USER_ID)).willReturn(Optional.of(DEFAULT_USER));
+//
+//        gson = new GsonBuilder().serializeNulls().create();
+//        webServer = new UsersWebServerWithFilterBasedSecurity(WEB_SERVER_PORT, userAuthService, userDao, gson, templateProcessor);
+//        webServer.start();
     }
 
     @AfterAll
