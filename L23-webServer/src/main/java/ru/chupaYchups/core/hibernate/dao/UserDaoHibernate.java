@@ -48,6 +48,21 @@ public class UserDaoHibernate implements UserDao {
     }
 
     @Override
+    public Optional<User> findRandomUser() {
+        DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
+        try {
+            return Optional.ofNullable(currentSession.
+                    getHibernateSession().
+                    createQuery("select u from user", User.class).
+                    setMaxResults(1).
+                    getSingleResult());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return Optional.empty();
+    }
+
+    @Override
     public long insertUser(User user) {
         DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
         try {

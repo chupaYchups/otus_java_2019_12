@@ -10,7 +10,6 @@ import ru.chupaYchups.web.services.TemplateProcessor;
 import ru.chupaYchups.web.services.UserAuthService;
 import ru.chupaYchups.web.servlet.AuthorizationFilter;
 import ru.chupaYchups.web.servlet.LoginServlet;
-
 import java.util.Arrays;
 
 public class UsersWebServerWithFilterBasedSecurity extends UsersWebServerSimple {

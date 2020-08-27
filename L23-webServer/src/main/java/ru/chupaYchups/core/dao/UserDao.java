@@ -9,6 +9,8 @@ public interface UserDao {
 
     Optional<User> findByLogin(String userName);
 
+    Optional<User> findRandomUser();
+
     Optional<User> findById(long id);
 
     long insertUser(User user);

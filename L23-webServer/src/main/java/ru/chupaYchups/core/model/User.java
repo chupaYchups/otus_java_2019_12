@@ -16,20 +16,26 @@ public class User {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "login")
+    private String login;
+
+    @Column(name = "password")
+    private String password;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-    //@JoinColumn(name = "userId")
     private List<Phone> phones;
 
     @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-    //@JoinColumn(name="userId")
     private Address address;
 
     public User() {
     }
 
-    public User(long id, String name) {
+    public User(long id, String name, String login, String password) {
         this.id = id;
         this.name = name;
+        this.login = login;
+        this.password = password;
     }
 
     public long getId() {
@@ -63,6 +69,22 @@ public class User {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override
