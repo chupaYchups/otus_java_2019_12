@@ -8,6 +8,7 @@ import ru.chupaYchups.core.dao.UserDao;
 import ru.chupaYchups.core.model.User;
 import ru.chupaYchups.core.sessionmanager.SessionManager;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -54,8 +55,19 @@ public class DbServiceUserImpl implements DBServiceUser {
     }
 
     @Override
-    public Optional<User> findRandomUser() {
-        return getUser(1);
+    public Optional<List<User>> findAllUsers() {
+        try (SessionManager sessionManager = userDao.getSessionManager()) {
+            sessionManager.beginSession();
+            try {
+                Optional<List<User>> userListOptional = userDao.findAllUsers();
+                logger.info("user list size: {}", userListOptional.map(users -> users.size()).orElse(null));
+                return userListOptional;
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+                sessionManager.rollbackSession();
+            }
+            return Optional.empty();
+        }
     }
 
     private <T> Optional<User> findUser(T paramToFind, Function<T, Optional<User>> findOp) {

@@ -39,13 +39,14 @@ public class WebServerWithFilterBasedSecurityDemo {
         UserDao userDaoHibernate = new UserDaoHibernate(sessionManagerHibernate);
         DBServiceUser dbService = new DbServiceUserImpl(userDaoHibernate, new MyCache(new HashMap<>(), new ArrayList<>()));
         dbService.saveUser(new User(0, "Иван", "user", "111"));
+        dbService.saveUser(new User(0, "Юлия", "user2", "111"));
+        dbService.saveUser(new User(0, "Софья", "user3", "111"));
 
         Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
         TemplateProcessor templateProcessor = new TemplateProcessorImpl(TEMPLATES_DIR);
         UserAuthService authService = new UserAuthServiceImpl(dbService);
 
-        UsersWebServer usersWebServer = new UsersWebServerWithFilterBasedSecurity(WEB_SERVER_PORT,
-                authService, dbService, gson, templateProcessor);
+        UsersWebServer usersWebServer = new UsersWebServerWithFilterBasedSecurity(WEB_SERVER_PORT, authService, dbService, gson, templateProcessor);
 
         usersWebServer.start();
         usersWebServer.join();

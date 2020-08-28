@@ -9,9 +9,12 @@ import ru.chupaYchups.core.hibernate.sessionmanager.DatabaseSessionHibernate;
 import ru.chupaYchups.core.hibernate.sessionmanager.SessionManagerHibernate;
 import ru.chupaYchups.core.model.User;
 import ru.chupaYchups.core.sessionmanager.SessionManager;
+import java.util.List;
 import java.util.Optional;
 
 public class UserDaoHibernate implements UserDao {
+
+    public static final int USER_LIST_MAX_SIZE = 100;
     private static Logger logger = LoggerFactory.getLogger(UserDaoHibernate.class);
 
     private final SessionManagerHibernate sessionManager;
@@ -48,14 +51,14 @@ public class UserDaoHibernate implements UserDao {
     }
 
     @Override
-    public Optional<User> findRandomUser() {
+    public Optional<List<User>> findAllUsers() {
         DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
         try {
             return Optional.ofNullable(currentSession.
                     getHibernateSession().
-                    createQuery("select u from user", User.class).
-                    setMaxResults(1).
-                    getSingleResult());
+                    createQuery("select u from User u", User.class).
+                    setMaxResults(USER_LIST_MAX_SIZE).
+                    getResultList());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
