@@ -1,6 +1,5 @@
 package otus.appcontainer;
 
-
 import otus.appcontainer.api.AppComponent;
 import otus.appcontainer.api.AppComponentsContainer;
 import otus.appcontainer.api.AppComponentsContainerConfig;
@@ -18,9 +17,13 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     }
 
     private void processConfig(Class<?> configClass) {
-
         checkConfigClass(configClass);
+        Object configInstance = createConfigInstance(configClass);
+        Map<Integer, Map<String, Method>> toCreateMap = scanConfiguration(configClass);
+        createBeanInstances(configInstance, toCreateMap);
+    }
 
+    private Object createConfigInstance(Class<?> configClass) {
         Object configInstance;
         try {
             configInstance = configClass.getConstructor().newInstance();
@@ -28,23 +31,10 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         } catch (Exception e) {
             throw new RuntimeException("Cannot create instance of config", e);
         }
+        return configInstance;
+    }
 
-        TreeMap<Integer, Map<String, Method>> toCreateMap = Arrays.stream(configClass.getMethods()).
-            filter(method -> method.isAnnotationPresent(AppComponent.class)).
-            collect(Collectors.toMap(
-                method -> method.getAnnotation(AppComponent.class).order(),
-                method -> {
-                    Map<String, Method> beanMap = new HashMap<>();
-                    beanMap.put(method.getAnnotation(AppComponent.class).name(), method);
-                    return beanMap;
-                },
-                (map1, map2) ->  {
-                    map1.putAll(map2);
-                    return map1;
-                },
-                () -> new TreeMap<>()
-            ));
-
+    private void createBeanInstances(Object configInstance, Map<Integer, Map<String, Method>> toCreateMap) {
         toCreateMap.forEach((integer, stringMethodMap) -> {
             stringMethodMap.forEach((beanName, method) -> {
                 Object beanInstance;
@@ -63,9 +53,24 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
             });
         });
+    }
 
-        System.out.println(appComponentsByName);
-        System.out.println(appComponents);
+    private Map<Integer, Map<String, Method>> scanConfiguration(Class<?> configClass) {
+        return Arrays.stream(configClass.getMethods()).
+                filter(method -> method.isAnnotationPresent(AppComponent.class)).
+                collect(Collectors.toMap(
+                    method -> method.getAnnotation(AppComponent.class).order(),
+                    method -> {
+                        Map<String, Method> beanMap = new HashMap<>();
+                        beanMap.put(method.getAnnotation(AppComponent.class).name(), method);
+                        return beanMap;
+                    },
+                    (map1, map2) ->  {
+                        map1.putAll(map2);
+                        return map1;
+                    },
+                    () -> new TreeMap<>()
+                ));
     }
 
     private void checkConfigClass(Class<?> configClass) {
