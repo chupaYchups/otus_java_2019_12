@@ -6,7 +6,6 @@ import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.chupaYchups.cachehw.HwCache;
@@ -20,9 +19,8 @@ import ru.chupaYchups.core.model.Phone;
 import ru.chupaYchups.core.model.User;
 import ru.chupaYchups.core.service.DBServiceUser;
 import ru.chupaYchups.core.service.DbServiceUserImpl;
-import static org.mockito.Mockito.*;
+
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -136,38 +134,30 @@ public class DbServiceUserIntegrationTest {
         assertThat(cacheMap.keySet()).isEmpty();
     }
 
-    /**
-    * Может валиться, в случае если прошла сборка мусора и кеш не вовремя
-    * был сброшен :)
-    */
     @Test
     @DisplayName("с кешем работает быстрее чем без кеша")
-    void shouldWorkFasterWithCache() throws InterruptedException {
-        Thread.sleep(TimeUnit.SECONDS.toMillis(2));
-        long cachedDurability = doTheHardSaveAndGetWork(dbServiceUser);
-
-        HwCache mockedCache = Mockito.mock(HwCache.class);
-        UserDaoHibernate userDaoHibernate = new UserDaoHibernate(sessionManagerHibernate);
-        DBServiceUser nonCachedService = new DbServiceUserImpl(userDaoHibernate, mockedCache);
-
-        Mockito.when(mockedCache.get(anyLong())).thenReturn(null);
-
-        long nonCachedDurability = doTheHardSaveAndGetWork(nonCachedService);
-
-        logger.info("nonCachedDurability : " + nonCachedDurability + ", cachedDurability : " + cachedDurability);
-        assertThat(nonCachedDurability).isGreaterThan(cachedDurability);
-    }
-
-    private long doTheHardSaveAndGetWork(DBServiceUser dbServiceUser) {
+    void shouldWorkFasterWithCache() {
+        //Добавили пользователей в БД
         final int TEST_USER_QTY = 100;
-        long startTime = System.nanoTime();
         IntStream.range(1, TEST_USER_QTY).forEach(value -> {
             User user = new User(0, TEST_USER_NAME + value);
-            dbServiceUser.saveUser(user);
+            saveUser(user);
         });
+        System.gc();
+        //Пробуем достать их из базы, без кеша
+        long startTime = System.nanoTime();
         IntStream.range(1, TEST_USER_QTY).forEach(value -> {
             dbServiceUser.getUser(value);
         });
-        return System.nanoTime() - startTime;
+        long withoutCacheDuration = System.nanoTime() - startTime;
+        //пробуем достать их из кеша, ведь они уже там
+        startTime = System.nanoTime();
+        IntStream.range(1, TEST_USER_QTY).forEach(value -> {
+            dbServiceUser.getUser(value);
+        });
+        long withCacheDuration = System.nanoTime() - startTime;
+
+        logger.info("withoutCacheDuration : " + withoutCacheDuration + ", withCacheDuration : " + withCacheDuration);
+        assertThat(withoutCacheDuration).isGreaterThan(withCacheDuration);
     }
 }
