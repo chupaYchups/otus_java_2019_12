@@ -23,6 +23,7 @@
         <module>L21-cacheEngine</module>
         <module>L23-webServer</module>
         <module>L24-ioc-container</module>
+        <module>L25-spring-MVC</module>
     </modules>
 
     <developers>
