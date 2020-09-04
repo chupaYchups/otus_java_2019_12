@@ -22,6 +22,7 @@
         <module>L19-hibernate</module>
         <module>L21-cacheEngine</module>
         <module>L23-webServer</module>
+        <module>L24-ioc-container</module>
     </modules>
 
     <developers>
