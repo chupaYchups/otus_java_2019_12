@@ -1,34 +1,13 @@
 package ru.chupaYchups.core.model;
 
-import java.util.List;
 import java.util.Objects;
 
-@Entity
-@Table(name = "users")
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "id")
     private long id;
-
-    @Column(name = "name")
     private String name;
-
-    @Column(name = "login")
     private String login;
-
-    @Column(name = "password")
     private String password;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-    private List<Phone> phones;
-
-    @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-    private Address address;
-
-    public User() {
-    }
 
     public User(long id, String name, String login, String password) {
         this.id = id;
@@ -52,22 +31,6 @@ public class User {
     public void setName(String name){
         this.name = name;
 
-    }
-
-    public List<Phone> getPhones() {
-        return phones;
-    }
-
-    public void setPhones(List<Phone> phones) {
-        this.phones = phones;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
     }
 
     public String getLogin() {
