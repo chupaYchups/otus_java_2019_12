@@ -1,0 +1,51 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пользователи</title>
+</head>
+
+<body>
+<form action="api/user" method="post">
+    <h4>Добавить пользователя:</h4>
+    <table>
+        <tr>
+            <td>Имя пользователя:</td>
+            <td><input type="text" name="userName" placeholder="Введите имя пользователя"></td>
+        </tr>
+        <tr>
+            <td>Логин пользователя:</td>
+            <td><input type="text" name="userLogin"  placeholder="Введите логин пользователя"></td>
+        </tr>
+        <tr>
+            <td>Пароль пользователя:</td>
+            <td><input type="text" name="userPassword" placeholder="Введите пароль пользователя"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input type="submit"></td>
+        </tr>
+    </table>
+</form>
+
+<h4>Список пользователей: </h4>
+<table style="width: 400px">
+    <thead>
+        <tr>
+            <td style="width: 50px">Id</td>
+            <td style="width: 150px">Имя</td>
+            <td style="width: 100px">Логин</td>
+            <td style="width: 100px">Пароль</td>
+        </tr>
+    </thead>
+    <tbody>
+        <#list users as user>
+            <tr>
+                <td>${user.id}</td>
+                <td>${user.name}</td>
+                <td>${user.login}</td>
+                <td>${user.password}</td>
+            </tr>
+        </#list>
+    </tbody>
+</table>
+</body>
+</html>
