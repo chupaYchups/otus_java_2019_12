@@ -9,12 +9,12 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
-public class DbServiceUserHibernateImpl implements DBServiceUser {
-    private static Logger logger = LoggerFactory.getLogger(DbServiceUserHibernateImpl.class);
+public class DbServiceUserImpl implements DBServiceUser {
+    private static Logger logger = LoggerFactory.getLogger(DbServiceUserImpl.class);
 
     private final UserDao userDao;
 
-    public DbServiceUserHibernateImpl(UserDao userDao) {
+    public DbServiceUserImpl(UserDao userDao) {
         this.userDao = userDao;
     }
 

@@ -53,8 +53,10 @@ public class DbServiceUserImpl implements DBServiceUser {
             try {
                 Optional<User> userOptional = userDao.findById(id);
                 logger.info("user: {}", userOptional.orElse(null));
-                Hibernate.initialize(userOptional.get().getAddress());
-                Hibernate.initialize(userOptional.get().getPhones());
+                userOptional.ifPresent(user -> {
+                    Hibernate.initialize(user.getAddress());
+                    Hibernate.initialize(user.getPhones());
+                });
                 cache.put(Long.toString(id), userOptional.get());
                 return userOptional;
             } catch (Exception e) {
