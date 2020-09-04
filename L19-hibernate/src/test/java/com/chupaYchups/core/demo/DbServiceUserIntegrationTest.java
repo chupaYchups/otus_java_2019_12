@@ -7,7 +7,7 @@ import com.chupaYchups.core.model.Address;
 import com.chupaYchups.core.model.Phone;
 import com.chupaYchups.core.model.User;
 import com.chupaYchups.core.service.DBServiceUser;
-import com.chupaYchups.core.service.DbServiceUserImpl;
+import com.chupaYchups.core.service.DbServiceUserHibernateImpl;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +34,7 @@ public class DbServiceUserIntegrationTest {
         sessionFactory = HibernateUtils.buildSessionFactory(HIBERNATE_CFG_XML, Phone.class, Address.class, User.class);
         SessionManagerHibernate sessionManagerHibernate = new SessionManagerHibernate(sessionFactory);
         UserDaoHibernate userDaoHibernate = new UserDaoHibernate(sessionManagerHibernate);
-        dbServiceUser = new DbServiceUserImpl(userDaoHibernate);
+        dbServiceUser = new DbServiceUserHibernateImpl(userDaoHibernate);
     }
 
     @Test
