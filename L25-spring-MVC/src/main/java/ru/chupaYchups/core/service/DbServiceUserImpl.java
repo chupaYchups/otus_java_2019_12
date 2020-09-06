@@ -3,6 +3,7 @@ package ru.chupaYchups.core.service;
 import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import ru.chupaYchups.cachehw.HwCache;
 import ru.chupaYchups.core.dao.UserDao;
 import ru.chupaYchups.core.model.User;
@@ -12,6 +13,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+
+@Service
 public class DbServiceUserImpl implements DBServiceUser {
 
     private static Logger logger = LoggerFactory.getLogger(DbServiceUserImpl.class);

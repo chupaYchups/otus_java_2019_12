@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+    <a th:href="@{/user/create}" href="userCreate.html">Создать нового пользователя</a>
+    <body>
+        <h4>Список пользователей: </h4>
+        <table style="width: 400px">
+            <thead>
+                <tr>
+                    <td>Id</td>
+                    <td>Имя</td>
+                    <td>Логин</td>
+                    <td>Пароль</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text = ${user.id}></td>
+                    <td th:text = ${user.name}></td>
+                    <td th:text = ${user.login}></td>
+                    <td th:text = ${user.password}> </td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>

@@ -1,5 +1,9 @@
 package ru.chupaYchups.cachehw;
 
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -7,6 +11,7 @@ import java.util.Map;
  * @author sergey
  * created on 14.12.18.
  */
+@Component
 public class MyCache<K, V> implements HwCache<K, V> {
 
     public static final String PUT = "PUT";
@@ -16,9 +21,9 @@ public class MyCache<K, V> implements HwCache<K, V> {
     private Map<K, V> cacheMap;
     private List<HwListener<K, V>> listenerList;
 
-    public MyCache(Map<K, V> cacheMap, List<HwListener<K, V>> listenerList) {
-        this.cacheMap = cacheMap;
-        this.listenerList = listenerList;
+    public MyCache() {
+        this.cacheMap = new HashMap<>();
+        this.listenerList = new ArrayList<>();
     }
 
     @Override
