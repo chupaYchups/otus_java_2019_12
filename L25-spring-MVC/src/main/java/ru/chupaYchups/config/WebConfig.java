@@ -1,4 +1,4 @@
-package ru.chupaYchups;
+package ru.chupaYchups.config;
 
 import org.hibernate.SessionFactory;
 import org.springframework.context.ApplicationContext;
@@ -24,8 +24,6 @@ import ru.chupaYchups.core.model.User;
 public class WebConfig implements WebMvcConfigurer {
 
     private final ApplicationContext applicationContext;
-
-    public static final String HIBERNATE_CFG_XML = "hibernate.cfg.xml";
 
     public WebConfig(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
@@ -59,10 +57,6 @@ public class WebConfig implements WebMvcConfigurer {
         return viewResolver;
     }
 
-    @Bean
-    public SessionFactory sessionFactory() {
-        return HibernateUtils.buildSessionFactory(HIBERNATE_CFG_XML, Phone.class, Address.class, User.class);
-    }
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {

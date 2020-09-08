@@ -11,19 +11,18 @@ import java.util.Map;
  * @author sergey
  * created on 14.12.18.
  */
-@Component
 public class MyCache<K, V> implements HwCache<K, V> {
 
     public static final String PUT = "PUT";
     public static final String REMOVE = "REMOVE";
     public static final String GET = "GET";
 
-    private Map<K, V> cacheMap;
-    private List<HwListener<K, V>> listenerList;
+    private final Map<K, V> cacheMap;
+    private final List<HwListener<K, V>> listenerList;
 
-    public MyCache() {
-        this.cacheMap = new HashMap<>();
-        this.listenerList = new ArrayList<>();
+    public MyCache(Map<K, V> cacheMap, List<HwListener<K, V>> listenerList) {
+        this.cacheMap = cacheMap;
+        this.listenerList = listenerList;
     }
 
     @Override

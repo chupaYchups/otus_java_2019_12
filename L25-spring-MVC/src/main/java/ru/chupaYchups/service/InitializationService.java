@@ -1,12 +1,8 @@
 package ru.chupaYchups.service;
 
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
 import ru.chupaYchups.core.model.User;
 import ru.chupaYchups.core.service.DBServiceUser;
 
-@Service
 public class InitializationService {
 
     private DBServiceUser dbServiceUser;
@@ -15,8 +11,7 @@ public class InitializationService {
         this.dbServiceUser = dbServiceUser;
     }
 
-    @EventListener
-    public void onApplicationEvent(ContextRefreshedEvent event) {
+    public void init() {
         createSomeUsers();
     }
 

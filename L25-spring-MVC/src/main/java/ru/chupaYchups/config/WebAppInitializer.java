@@ -1,4 +1,4 @@
-package ru.chupaYchups;
+package ru.chupaYchups.config;
 
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
@@ -12,7 +12,7 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return null;
+        return new Class<?>[]{AppConfig.class};
     }
 
     @Override

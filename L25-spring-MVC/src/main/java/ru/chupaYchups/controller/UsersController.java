@@ -14,7 +14,7 @@ import java.util.List;
 @Controller
 public class UsersController {
 
-    private DBServiceUser dbServiceUser;
+    private final DBServiceUser dbServiceUser;
 
     public UsersController(DBServiceUser dbServiceUser) {
         this.dbServiceUser = dbServiceUser;
