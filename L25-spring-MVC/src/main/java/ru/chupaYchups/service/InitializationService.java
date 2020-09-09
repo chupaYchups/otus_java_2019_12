@@ -5,7 +5,7 @@ import ru.chupaYchups.core.service.DBServiceUser;
 
 public class InitializationService {
 
-    private DBServiceUser dbServiceUser;
+    private final DBServiceUser dbServiceUser;
 
     public InitializationService(DBServiceUser dbServiceUser) {
         this.dbServiceUser = dbServiceUser;

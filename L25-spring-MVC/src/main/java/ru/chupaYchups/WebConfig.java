@@ -1,6 +1,5 @@
-package ru.chupaYchups.config;
+package ru.chupaYchups;
 
-import org.hibernate.SessionFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -13,10 +12,6 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
-import ru.chupaYchups.core.hibernate.HibernateUtils;
-import ru.chupaYchups.core.model.Address;
-import ru.chupaYchups.core.model.Phone;
-import ru.chupaYchups.core.model.User;
 
 @Configuration
 @ComponentScan

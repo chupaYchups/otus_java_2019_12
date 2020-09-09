@@ -1,7 +1,8 @@
-package ru.chupaYchups.config;
+package ru.chupaYchups;
 
 import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import ru.chupaYchups.cachehw.HwCache;
 import ru.chupaYchups.cachehw.MyCache;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 @Configuration
+@ComponentScan
 public class AppConfig {
 
     public static final String HIBERNATE_CFG_XML = "hibernate.cfg.xml";

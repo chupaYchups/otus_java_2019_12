@@ -1,4 +1,4 @@
-package ru.chupaYchups.config;
+package ru.chupaYchups;
 
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
