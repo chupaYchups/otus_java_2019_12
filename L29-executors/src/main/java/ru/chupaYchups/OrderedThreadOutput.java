@@ -2,8 +2,6 @@ package ru.chupaYchups;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -11,10 +9,13 @@ public class OrderedThreadOutput {
 
     private static Logger logger = LoggerFactory.getLogger(OrderedThreadOutput.class);
 
-    private ReentrantLock lock = new ReentrantLock(true);
-    private Condition notAllOnStartCondition = lock.newCondition();
+    private ReentrantLock printLock = new ReentrantLock();
+    private Condition ifLastCondition = printLock.newCondition();
 
-    private int counterOnStart = 0;
+    public static final String THREAD_FIRST_NAME = "thread-1";
+    public static final String THREAD_SECOND_NAME = "thread-2";
+
+    private String lastThreadName = THREAD_SECOND_NAME;
 
     public static void main(String[] args) {
         OrderedThreadOutput orderedThreadOutput = new OrderedThreadOutput();
@@ -22,44 +23,43 @@ public class OrderedThreadOutput {
     }
 
     public void doIt() {
-        ExecutorService executor = Executors.newFixedThreadPool(2);
-        Runnable runnable = () -> {
-            try {
-                loop();
-            } catch (InterruptedException e) {
-                logger.error("Exception in thread " + Thread.currentThread().getName() , e);
-                Thread.currentThread().interrupt();
-            }
-        };
-        executor.execute(runnable);
-        executor.execute(runnable);
-        executor.shutdown();
+        Thread threadFirst = new Thread(this::start);
+        threadFirst.setName(THREAD_FIRST_NAME);
+        Thread threadSecond = new Thread(this::start);
+        threadSecond.setName(THREAD_SECOND_NAME);
+        threadFirst.start();
+        threadSecond.start();
     }
 
-    private void doTheOutput(int number) throws InterruptedException {
-        lock.lock();
+    private void start() {
         try {
-            if (counterOnStart < 1) {
-                counterOnStart++;
-                notAllOnStartCondition.await();
-            } else {
-                notAllOnStartCondition.signal();
+            while (!Thread.currentThread().isInterrupted()) {
+                for (int i = 1; i <= 10; i++) {
+                    printNumber(i);
+                }
+                for (int i = 9; i > 1; i--) {
+                    printNumber(i);
+                }
             }
-            logger.info(String.format("%" + number + "d",  number));
-            sleep(300);
-        } finally {
-            lock.unlock();
+        } catch (InterruptedException exc) {
+            Thread.currentThread().interrupt();
+            logger.error(Thread.currentThread().getName() + " interrupted", exc);
         }
     }
 
-    private void loop() throws InterruptedException {
-        while (!Thread.currentThread().isInterrupted()) {
-            for (int i = 1; i <= 10; i++) {
-                doTheOutput(i);
+    private void printNumber(int number) throws InterruptedException {
+        printLock.lock();
+        try {
+            String currentThreadName = Thread.currentThread().getName();
+            if (lastThreadName.equals(currentThreadName)) {
+                ifLastCondition.await();
             }
-            for (int i = 9; i > 1; i--) {
-                doTheOutput(i);
-            }
+            logger.info(String.format("%" + number + "d",  number));
+            sleep(300);
+            lastThreadName = currentThreadName;
+            ifLastCondition.signalAll();
+        } finally {
+            printLock.unlock();
         }
     }
 
