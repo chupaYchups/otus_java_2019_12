@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Список пользователей</title>
+    <script>
+        var stompClient;
+        function createWsConnection() {
+            const stompClient = Stomp.over(new SockJS('/gs-guide-websocket'));
+            stompClient.connect({}, (frame) => {
+                console.log('Connected: ' + frame);
+                stompClient.subscribe('/topic/userInfo', (timeMsg) => document.getElementById("currentTime").innerHTML = timeMsg.body);
+            });
+        }
+        function doWsConnection() {
+            const name = document.getElementById("name-input");
+            const login = document.getElementById("login-input");
+            const password = document.getElementById("password-input");
+            client.send('/topic/userInfo', {priority: 9}, "Hello, STOMP");
+        }
+    </script>
+</head>
+    <div>
+        <table>
+            <tr>
+                <td>Имя:</td>
+                <td><input id="name-input" name="name" type="text"/></td>
+            </tr>
+            <tr>
+                <td>Логин:</td>
+                <td><input id="login-input" name="login" type="text"/></td>
+            </tr>
+            <tr>
+                <td>Пароль:</td>
+                <td><input id="password-input" name="password" type="text"/></td>
+            </tr>
+            <tr>
+                <td colspan="2"><input value="Создать пользователя" name="password" type="button"></td>
+            </tr>
+        </table>
+    </div>
+    <a th:href="@{/user/create}" href="userCreate.html">Создать нового пользователя</a>
+    <body onload="createWsConnection();">
+        <h4>Список пользователей: </h4>
+        <table style="width: 400px">
+            <thead>
+                <tr>
+                    <td>Id</td>
+                    <td>Имя</td>
+                    <td>Логин</td>
+                    <td>Пароль</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text = ${user.id}></td>
+                    <td th:text = ${user.name}></td>
+                    <td th:text = ${user.login}></td>
+                    <td th:text = ${user.password}> </td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>
