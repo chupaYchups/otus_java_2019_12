@@ -1,11 +1,11 @@
 package ru.chupaYchups.core.service;
 
+import ru.chupaYchups.core.dao.UserDao;
 import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.chupaYchups.cachehw.HwCache;
-import ru.chupaYchups.core.dao.UserDao;
 import ru.chupaYchups.core.model.User;
 import ru.chupaYchups.core.sessionmanager.SessionManager;
 

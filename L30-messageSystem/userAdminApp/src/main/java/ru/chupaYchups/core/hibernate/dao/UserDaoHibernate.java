@@ -1,15 +1,15 @@
 package ru.chupaYchups.core.hibernate.dao;
 
+import ru.chupaYchups.core.dao.UserDao;
+import ru.chupaYchups.core.hibernate.sessionmanager.SessionManagerHibernate;
+import ru.chupaYchups.core.model.User;
+import ru.chupaYchups.core.sessionmanager.SessionManager;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-import ru.chupaYchups.core.dao.UserDao;
 import ru.chupaYchups.core.dao.UserDaoException;
 import ru.chupaYchups.core.hibernate.sessionmanager.DatabaseSessionHibernate;
-import ru.chupaYchups.core.hibernate.sessionmanager.SessionManagerHibernate;
-import ru.chupaYchups.core.model.User;
-import ru.chupaYchups.core.sessionmanager.SessionManager;
 
 import java.util.List;
 import java.util.Optional;
