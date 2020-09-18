@@ -16,6 +16,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>userAdminApp</module>
+        <module>messageSystem</module>
     </modules>
 
 </project>
