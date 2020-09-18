@@ -61,13 +61,16 @@
             <artifactId>stomp-websocket</artifactId>
             <version>${stomp.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>bootstrap</artifactId>
             <version>${bootstrap.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>messageSystem</artifactId>
+            <version>2.3.3.RELEASE</version>
+        </dependency>
     </dependencies>
 
     <build>
