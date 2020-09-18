@@ -21,14 +21,12 @@
             });
         }
         function sendUser() {
-            // const name = document.getElementById("name-input");
-            // const login = document.getElementById("login-input");
-            // const password = document.getElementById("password-input");
             stompClient.send('/app/message',
                 {},
                 JSON.stringify({'name' : $('#name-input').val(),
                     'login' : $('#login-input').val(),
                     'password' : $('#password-input').val()}));
+            $('[id$=-input]').val('');
         }
 
     </script>
