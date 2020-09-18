@@ -1,23 +1,36 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="/webjars/jquery/jquery.min.js"></script>
+
     <meta charset="UTF-8"/>
     <title>Список пользователей</title>
     <script>
-        var stompClient;
+        let stompClient;
         function createWsConnection() {
-            const stompClient = Stomp.over(new SockJS('/gs-guide-websocket'));
+            stompClient = Stomp.over(new SockJS('/gs-guide-websocket'));
+            //подписываемся
             stompClient.connect({}, (frame) => {
                 console.log('Connected: ' + frame);
-                stompClient.subscribe('/topic/userInfo', (timeMsg) => document.getElementById("currentTime").innerHTML = timeMsg.body);
+                stompClient.subscribe('/topic/userAdd', (timeMsg) => {
+                    const user = JSON.stringify(timeMsg);
+                    document.getElementById("users").innerHTML += "<tr><td>timeMsg</td><td>timeMsg</td><td>timeMsg</td><td>timeMsg</td></tr>";
+                });
             });
         }
-        function doWsConnection() {
-            const name = document.getElementById("name-input");
-            const login = document.getElementById("login-input");
-            const password = document.getElementById("password-input");
-            client.send('/topic/userInfo', {priority: 9}, "Hello, STOMP");
+        function sendUser() {
+            // const name = document.getElementById("name-input");
+            // const login = document.getElementById("login-input");
+            // const password = document.getElementById("password-input");
+            stompClient.send('/app/message',
+                {},
+                JSON.stringify({'name' : $('#name-input').val(),
+                    'login' : $('#login-input').val(),
+                    'password' : $('#password-input').val()}));
         }
+
     </script>
 </head>
     <div>
@@ -35,14 +48,15 @@
                 <td><input id="password-input" name="password" type="text"/></td>
             </tr>
             <tr>
-                <td colspan="2"><input value="Создать пользователя" name="password" type="button"></td>
+                <td colspan="2"><input value="Создать пользователя" name="password" type="button" onclick="sendUser()"></td>
             </tr>
         </table>
     </div>
     <a th:href="@{/user/create}" href="userCreate.html">Создать нового пользователя</a>
     <body onload="createWsConnection();">
+        <div id="currentTime"></div>
         <h4>Список пользователей: </h4>
-        <table style="width: 400px">
+        <table id="users" style="width: 400px">
             <thead>
                 <tr>
                     <td>Id</td>
