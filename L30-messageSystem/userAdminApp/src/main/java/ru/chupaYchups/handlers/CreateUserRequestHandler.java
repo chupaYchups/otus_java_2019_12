@@ -21,7 +21,7 @@ public class CreateUserRequestHandler implements RequestHandler<UserData> {
     @Override
     public Optional<Message> handle(Message msg) {
         UserData userData = MessageHelper.getPayload(msg);
-        User user = new User(0, userData.getName(), userData.getName(), userData.getPassword());
+        User user = new User(0, userData.getName(), userData.getLogin(), userData.getPassword());
         long userId = dbServiceUser.saveUser(user);
         user = dbServiceUser.getUser(userId).get();
         UserData userDataResponse = new UserData(user.getId(), user.getName(), user.getLogin(), user.getPassword());

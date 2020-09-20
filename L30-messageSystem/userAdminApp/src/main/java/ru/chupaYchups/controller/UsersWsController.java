@@ -7,25 +7,24 @@ import org.springframework.stereotype.Controller;
 import ru.chupaYchups.front.FrontServiceImpl;
 
 @Controller
-public class WebsocketController {
+public class UsersWsController {
 
     private final FrontServiceImpl frontService;
 
-    private static Logger logger = LoggerFactory.getLogger(WebsocketController.class);
+    private static Logger logger = LoggerFactory.getLogger(UsersWsController.class);
 
-    public WebsocketController(FrontServiceImpl frontService) {
+    public UsersWsController(FrontServiceImpl frontService) {
         this.frontService = frontService;
     }
 
-    @MessageMapping("/message")
+    @MessageMapping("/userCreate")
     public void createUser(UserInfoMessage message) {
         logger.info("got message:{}", message);
         frontService.createUser(message.getName(), message.getLogin(), message.getPassword());
     }
 
-    @MessageMapping("/messageTwo")
+    @MessageMapping("/getUserList")
     public void getUserList() {
         frontService.getUserList();
     }
-    
 }

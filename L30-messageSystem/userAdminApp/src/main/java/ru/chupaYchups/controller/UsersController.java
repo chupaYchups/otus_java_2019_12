@@ -38,9 +38,4 @@ public class UsersController {
         dbServiceUser.saveUser(user);
         return new RedirectView("/", true);
     }
-
-    @GetMapping("/hello1")
-    public String helloView(Model model) {
-        return "hello.html";
-    }
 }

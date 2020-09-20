@@ -9,7 +9,7 @@
     <script>
         let stompClient;
         function createWsConnection() {
-            stompClient = Stomp.over(new SockJS('/gs-guide-websocket'));
+            stompClient = Stomp.over(new SockJS('/user-websocket'));
             //подписываемся
             stompClient.connect({}, (frame) => {
                 console.log('Connected: ' + frame);
@@ -25,11 +25,11 @@
                             "</tr>")
                     })
                 });
-                stompClient.send('/app/messageTwo', {}, null);
+                stompClient.send('/app/getUserList', {}, null);
             });
         }
         function sendUser() {
-            stompClient.send('/app/message',
+            stompClient.send('/app/userCreate',
                 {},
                 JSON.stringify({'name' : $('#name-input').val(),
                     'login' : $('#login-input').val(),
