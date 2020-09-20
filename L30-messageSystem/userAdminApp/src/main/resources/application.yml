@@ -1,2 +1,9 @@
 server:
   port: 8080
+
+message:
+  system:
+    client:
+      name:
+        database : dbClient
+        front :  frontClient
