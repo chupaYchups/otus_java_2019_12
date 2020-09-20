@@ -26,6 +26,5 @@ public class CreateUserRequestHandler implements RequestHandler<UserData> {
         user = dbServiceUser.getUser(userId).get();
         UserData userDataResponse = new UserData(user.getId(), user.getName(), user.getLogin(), user.getPassword());
         return Optional.of(MessageBuilder.buildReplyMessage(msg, userDataResponse));
-        //return Optional.empty();
     }
 }

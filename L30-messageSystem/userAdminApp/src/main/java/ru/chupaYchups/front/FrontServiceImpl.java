@@ -25,8 +25,20 @@ public class FrontServiceImpl implements FrontService {
     @Override
     public void createUser(String userName, String login, String password) {
         Message msg = msClient.produceMessage(dbClientName, new UserData(userName, login, password), MessageType.USER_DATA, userData -> {
-            simpMessagingTemplate.convertAndSend("/topic/users", userData);
+            sendUserListRequestMsg();
         });
         msClient.sendMessage(msg);
+    }
+
+    @Override
+    public void getUserList() {
+        sendUserListRequestMsg();
+    }
+
+    private void sendUserListRequestMsg() {
+        Message message = msClient.produceMessage(dbClientName, null, MessageType.USER_LIST, userDataList -> {
+            simpMessagingTemplate.convertAndSend("/topic/userList", userDataList);
+        });
+        msClient.sendMessage(message);
     }
 }
