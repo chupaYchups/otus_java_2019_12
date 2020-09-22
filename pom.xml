@@ -25,6 +25,7 @@
         <module>L24-ioc-container</module>
         <module>L25-spring-MVC</module>
         <module>L29-executors</module>
+        <module>L31-multiProcess</module>
     </modules>
 
     <developers>
