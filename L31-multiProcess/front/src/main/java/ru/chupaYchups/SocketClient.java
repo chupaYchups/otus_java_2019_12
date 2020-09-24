@@ -6,11 +6,9 @@ import ru.otus.messagesystem.MessageSystemImpl;
 import ru.otus.messagesystem.client.CallbackRegistryImpl;
 import ru.otus.messagesystem.client.MsClient;
 import ru.otus.messagesystem.client.MsClientImpl;
-import ru.otus.messagesystem.message.Message;
-import ru.otus.messagesystem.message.MessageType;
 import ru.otus.messagesystem.message.RegisterMessage;
-
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -37,21 +35,7 @@ public class SocketClient {
                 PrintWriter outputStream = new PrintWriter(clientSocket.getOutputStream(), true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
-//                String msg = gson.toJson(registerMessage);
-
-                RegisterMessage regMsg = new RegisterMessage();
-                regMsg.setName("front");
-
-                Message message  = msClient.produceMessage("db", regMsg, MessageType.USER_LIST, t -> System.out.println("hello!"));
-
-                Gson gson = new Gson();
-                outputStream.println(gson.toJson(regMsg));
-                System.out.println(String.format("sending to server: %s", regMsg));
-                System.out.println(String.format("server response: %s", in.readLine()));
-
-                outputStream.println(gson.toJson(message));
-                System.out.println(String.format("sending to server: %s", message));
-                System.out.println(String.format("server response: %s", in.readLine()));
+                registerToServer(outputStream, in);
 
                 for (int idx = 0; idx < 3; idx++) {
                     String msg = String.format("##%d - I Believe", idx);
@@ -71,5 +55,14 @@ public class SocketClient {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    private void registerToServer(PrintWriter outputStream, BufferedReader in) throws IOException {
+        Gson gson = new Gson();
+        RegisterMessage regMsg = new RegisterMessage();
+        regMsg.setName("front");
+        outputStream.println(gson.toJson(regMsg));
+        System.out.println(String.format("sending to server: %s", regMsg));
+        System.out.println(String.format("server response: %s", in.readLine()));
     }
 }

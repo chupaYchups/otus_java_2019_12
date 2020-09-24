@@ -7,6 +7,7 @@ import ru.otus.messagesystem.MessageSystem;
 import ru.otus.messagesystem.client.MsClientSocket;
 import ru.otus.messagesystem.message.RegisterMessage;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -33,8 +34,11 @@ public class SocketServerServiceImpl implements SocketServerService {
     public void startServer() {
         try(ServerSocket serverSocket = new ServerSocket(SERVER_PORT)) {
             while(!Thread.currentThread().isInterrupted()) {
-                try(Socket socket = serverSocket.accept()){
-                   handleClientSocket(socket);
+                try {
+                    Socket socket = serverSocket.accept();
+                    threadPoolExecutor.execute(() -> handleClientSocket(socket));
+                }  catch (Exception e){
+                    e.printStackTrace();
                 }
             }
         } catch (Exception e) {
@@ -42,36 +46,38 @@ public class SocketServerServiceImpl implements SocketServerService {
         }
     }
 
-    private void handleClientSocket(Socket socket) {
-        try (PrintWriter outputStream = new PrintWriter(socket.getOutputStream(), true);
-             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-             //String input = null;
-             String input = in.readLine();
-             System.out.println("input from socket : " + input);
-             addClientToMsSystem(socket, input);
-             outputStream.println("Hello!");
-
-            input = in.readLine();
-            System.out.println("input from socket : " + input);
-            //addClientToMsSystem(socket, input);
-            outputStream.println("Hello!");
-
-            while (!"stop".equals(input)) {
-                input = in.readLine();
-                if (input != null) {
-                    System.out.println("input from socket : " + input);
-                    outputStream.println("Hello!");
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void registerClient(Socket socket, PrintWriter outputStream,  BufferedReader in) throws IOException {
+        String input = in.readLine();
+        System.out.println("input from socket : " + input);
+        addClientToMsSystem(socket, input);
+        outputStream.println("client add : OK");
     }
 
     private void addClientToMsSystem(Socket socket, String input) {
         RegisterMessage registerMessage = gson.fromJson(input, RegisterMessage.class);
         MsClientSocket msClientSocket = new MsClientSocket(socket, registerMessage.getName());
         messageSystem.addClient(msClientSocket);
-        System.out.println("Client registered!!!");
+        System.out.println("Client registered : " + registerMessage.getName());
+    }
+
+    private void handleClientSocket(Socket socket) {
+        try (PrintWriter outputStream = new PrintWriter(socket.getOutputStream(), true);
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+
+            registerClient(socket, outputStream, in);
+
+            String input = null;
+            while (!"stop".equals(input)) {
+                input = in.readLine();
+                if (input != null) {
+                    System.out.println("Input from socket : " + input);
+                    outputStream.println("Response from socket : OK");
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 }
