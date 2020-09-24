@@ -1,6 +1,8 @@
 package ru.otus.messagesystem.message;
 
-public class RegisterMessage {
+import ru.otus.messagesystem.client.ResultDataType;
+
+public class RegisterMessage extends ResultDataType {
 
     private String name;
 
@@ -10,5 +12,12 @@ public class RegisterMessage {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "RegisterMessage{" +
+                "name='" + name + '\'' +
+                '}';
     }
 }

@@ -34,7 +34,7 @@ public class SocketServerServiceImpl implements SocketServerService {
         try(ServerSocket serverSocket = new ServerSocket(SERVER_PORT)) {
             while(!Thread.currentThread().isInterrupted()) {
                 try(Socket socket = serverSocket.accept()){
-                    threadPoolExecutor.execute(() -> handleClientSocket(socket));
+                   handleClientSocket(socket);
                 }
             }
         } catch (Exception e) {
@@ -45,9 +45,17 @@ public class SocketServerServiceImpl implements SocketServerService {
     private void handleClientSocket(Socket socket) {
         try (PrintWriter outputStream = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-             String input = null;
-//            String input = in.readLine();
-//            addClientToMsSystem(socket, input);
+             //String input = null;
+             String input = in.readLine();
+             System.out.println("input from socket : " + input);
+             addClientToMsSystem(socket, input);
+             outputStream.println("Hello!");
+
+            input = in.readLine();
+            System.out.println("input from socket : " + input);
+            //addClientToMsSystem(socket, input);
+            outputStream.println("Hello!");
+
             while (!"stop".equals(input)) {
                 input = in.readLine();
                 if (input != null) {
@@ -64,5 +72,6 @@ public class SocketServerServiceImpl implements SocketServerService {
         RegisterMessage registerMessage = gson.fromJson(input, RegisterMessage.class);
         MsClientSocket msClientSocket = new MsClientSocket(socket, registerMessage.getName());
         messageSystem.addClient(msClientSocket);
+        System.out.println("Client registered!!!");
     }
 }
