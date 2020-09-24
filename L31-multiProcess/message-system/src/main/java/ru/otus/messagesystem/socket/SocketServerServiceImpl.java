@@ -61,7 +61,7 @@ public class SocketServerServiceImpl implements SocketServerService {
     }
 
     private void handleClientSocket(Socket socket) {
-        try (PrintWriter outputStream = new PrintWriter(socket.getOutputStream(), true);
+        try (socket; PrintWriter outputStream = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
             registerClient(socket, outputStream, in);
