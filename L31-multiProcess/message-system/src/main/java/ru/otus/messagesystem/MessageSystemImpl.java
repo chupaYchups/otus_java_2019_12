@@ -2,6 +2,7 @@ package ru.otus.messagesystem;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import ru.otus.messagesystem.client.MsClient;
 import ru.otus.messagesystem.message.Message;
 import ru.otus.messagesystem.message.MessageBuilder;
@@ -19,6 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
+@Service
 public final class MessageSystemImpl implements MessageSystem {
     private static final Logger logger = LoggerFactory.getLogger(MessageSystemImpl.class);
     private static final int MESSAGE_QUEUE_SIZE = 100_000;
@@ -49,16 +51,6 @@ public final class MessageSystemImpl implements MessageSystem {
             return thread;
         }
     });
-
-    public MessageSystemImpl() {
-        start();
-    }
-
-    public MessageSystemImpl(boolean startProcessing) {
-        if (startProcessing) {
-            start();
-        }
-    }
 
     @Override
     public void start() {
