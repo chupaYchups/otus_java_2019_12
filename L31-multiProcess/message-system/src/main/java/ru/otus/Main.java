@@ -13,7 +13,7 @@ public class Main {
 		MessageSystem messageSystem = (MessageSystem)context.getBean("messageSystemImpl");
 		messageSystem.start();
 
-		SocketServerService socketServerService = (SocketServerService)context.getBean("SocketServerServiceImpl");
+		SocketServerService socketServerService = (SocketServerService)context.getBean("socketServerServiceImpl");
 		socketServerService.startServer();
 	}
 }
