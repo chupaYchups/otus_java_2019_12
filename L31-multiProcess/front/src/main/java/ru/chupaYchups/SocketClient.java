@@ -1,11 +1,8 @@
 package ru.chupaYchups;
 
 import com.google.gson.Gson;
-import ru.otus.messagesystem.HandlersStore;
 import ru.otus.messagesystem.HandlersStoreImpl;
-import ru.otus.messagesystem.MessageSystem;
 import ru.otus.messagesystem.MessageSystemImpl;
-import ru.otus.messagesystem.client.CallbackRegistry;
 import ru.otus.messagesystem.client.CallbackRegistryImpl;
 import ru.otus.messagesystem.client.MsClient;
 import ru.otus.messagesystem.client.MsClientImpl;
@@ -36,10 +33,9 @@ public class SocketClient {
 
         try {
             try (Socket clientSocket = new Socket(HOST, PORT)) {
+
                 PrintWriter outputStream = new PrintWriter(clientSocket.getOutputStream(), true);
-
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
 
 //                String msg = gson.toJson(registerMessage);
 
