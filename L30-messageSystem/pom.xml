@@ -15,8 +15,8 @@
     <artifactId>L30-messageSystem</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>userAdminApp</module>
-        <module>messageSystem</module>
+        <module>UserAdminApp</module>
+        <module>MessageSystem</module>
     </modules>
 
 </project>

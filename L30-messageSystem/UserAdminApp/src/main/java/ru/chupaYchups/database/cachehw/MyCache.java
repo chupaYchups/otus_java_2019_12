@@ -1,4 +1,4 @@
-package ru.chupaYchups.cachehw;
+package ru.chupaYchups.database.cachehw;
 
 import java.util.List;
 import java.util.Map;

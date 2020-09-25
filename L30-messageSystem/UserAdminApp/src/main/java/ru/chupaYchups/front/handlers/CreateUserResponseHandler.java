@@ -1,4 +1,4 @@
-package ru.chupaYchups.handlers;
+package ru.chupaYchups.front.handlers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

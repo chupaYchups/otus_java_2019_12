@@ -1,4 +1,4 @@
-package ru.chupaYchups.cachehw;
+package ru.chupaYchups.database.cachehw;
 
 /**
  * @author sergey

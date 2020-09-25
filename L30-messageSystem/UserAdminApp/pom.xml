@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>userAdminApp</artifactId>
+    <artifactId>UserAdminApp</artifactId>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -68,7 +68,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>messageSystem</artifactId>
+            <artifactId>MessageSystem</artifactId>
             <version>2.3.3.RELEASE</version>
         </dependency>
     </dependencies>

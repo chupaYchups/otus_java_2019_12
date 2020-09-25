@@ -1,8 +1,9 @@
-package ru.chupaYchups.handlers;
+package ru.chupaYchups.front.handlers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.chupaYchups.dto.UserDataList;
+import ru.chupaYchups.front.handlers.CreateUserResponseHandler;
 import ru.otus.messagesystem.RequestHandler;
 import ru.otus.messagesystem.client.CallbackRegistry;
 import ru.otus.messagesystem.client.MessageCallback;
