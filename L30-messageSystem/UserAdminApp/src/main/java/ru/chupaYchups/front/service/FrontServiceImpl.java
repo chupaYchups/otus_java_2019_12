@@ -1,4 +1,4 @@
-package ru.chupaYchups.front;
+package ru.chupaYchups.front.service;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
