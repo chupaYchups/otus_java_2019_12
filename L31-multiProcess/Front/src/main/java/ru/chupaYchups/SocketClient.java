@@ -20,9 +20,9 @@ public class SocketClient {
 
     MsClient msClient;
 
-//    public static void main(String[] args) {
-//        new SocketClient().go();
-//    }
+     public static void main(String[] args) {
+        new SocketClient().go();
+    }
 
     private void go() {
 

@@ -3,6 +3,9 @@ server:
 
 message:
   system:
+    socket:
+      host: localhost
+      port: 8090
     client:
       name:
         database : dbClient

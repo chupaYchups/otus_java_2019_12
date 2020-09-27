@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.chupaYchups.config.MsClientProps;
+import ru.chupaYchups.config.MsSystemConnectionProps;
 import ru.chupaYchups.dto.UserData;
 import ru.chupaYchups.dto.UserDataList;
 import ru.chupaYchups.messageSystem.handlers.CreateUserResponseHandler;
@@ -20,19 +21,13 @@ import ru.otus.messagesystem.client.MsClientImpl;
 import ru.otus.messagesystem.message.MessageType;
 
 @Configuration
-@EnableConfigurationProperties(MsClientProps.class)
+@EnableConfigurationProperties({MsClientProps.class, MsSystemConnectionProps.class})
 public class MessageSystemConfig {
 
     @Bean
     public CallbackRegistry callbackRegistry() {
         return new CallbackRegistryImpl();
     }
-
-    @Bean
-    public MessageSystem messageSystem() {
-        return new MessageSystemProxy();
-    }
-
 
     @Bean
     public MsClient msClient(MsClientProps messageSystemClientNameProps, MessageSystem messageSystem, CallbackRegistry callbackRegistry, @Qualifier("responseHandlerStore") HandlersStore handlersStore) {

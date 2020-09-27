@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <meta charset="UTF-8"/>
+    <title>Список пользователей</title>
+    <script>
+        let stompClient;
+        function createWsConnection() {
+            stompClient = Stomp.over(new SockJS('/user-websocket'));
+            //подписываемся
+            stompClient.connect({}, (frame) => {
+                console.log('Connected: ' + frame);
+                stompClient.subscribe('/topic/userList', (userInfo) => {
+                    $('#users tbody').empty();
+                    JSON.parse(userInfo.body).userDataList.forEach(function(user) {
+                        $('#users tbody').append(
+                            "<tr>" +
+                                "<td>" + user.id + "</td>" +
+                                "<td>" + user.name + "</td>" +
+                                "<td>" + user.login + "</td>" +
+                                "<td>" + user.password + "</td>" +
+                            "</tr>")
+                    })
+                });
+                stompClient.send('/app/getUserList', {}, null);
+            });
+        }
+        function sendUser() {
+            stompClient.send('/app/userCreate',
+                {},
+                JSON.stringify({'name' : $('#name-input').val(),
+                    'login' : $('#login-input').val(),
+                    'password' : $('#password-input').val()}));
+            $('[id$=-input]').val('');
+        }
+    </script>
+</head>
+    <div>
+        <table>
+            <tr>
+                <td>Имя:</td>
+                <td><input id="name-input" name="name" type="text"/></td>
+            </tr>
+            <tr>
+                <td>Логин:</td>
+                <td><input id="login-input" name="login" type="text"/></td>
+            </tr>
+            <tr>
+                <td>Пароль:</td>
+                <td><input id="password-input" name="password" type="text"/></td>
+            </tr>
+            <tr>
+                <td colspan="2"><input value="Создать пользователя" name="password" type="button" onclick="sendUser()"></td>
+            </tr>
+        </table>
+    </div>
+    <body onload="createWsConnection();">
+        <h4>Список пользователей: </h4>
+        <table id="users" style="width: 400px">
+            <thead>
+                <tr>
+                    <td>Id</td>
+                    <td>Имя</td>
+                    <td>Логин</td>
+                    <td>Пароль</td>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </body>
+</html>

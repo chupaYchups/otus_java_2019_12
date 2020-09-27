@@ -2,6 +2,7 @@ package ru.chupaYchups.service;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import ru.chupaYchups.config.MsClientProps;
 import ru.chupaYchups.dto.UserData;
 import ru.otus.messagesystem.client.MsClient;
 import ru.otus.messagesystem.message.Message;
@@ -14,9 +15,9 @@ public class FrontServiceImpl implements FrontService {
     private final String dbClientName;
     private final SimpMessagingTemplate simpMessagingTemplate;
 
-    public FrontServiceImpl(MsClient msClient, SimpMessagingTemplate simpMessagingTemplate, String dbClientName) {
+    public FrontServiceImpl(MsClient msClient, SimpMessagingTemplate simpMessagingTemplate, MsClientProps msClientProps) {
         this.msClient = msClient;
-        this.dbClientName = dbClientName;
+        this.dbClientName = msClientProps.getDatabase();
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
 

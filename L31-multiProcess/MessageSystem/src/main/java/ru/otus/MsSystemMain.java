@@ -5,7 +5,7 @@ import ru.otus.messagesystem.MessageSystemImpl;
 import ru.otus.messagesystem.socket.SocketServer;
 import ru.otus.messagesystem.socket.SocketServerImpl;
 
-public class Main {
+public class MsSystemMain {
 
     public static void main(String[] args) {
 

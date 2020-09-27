@@ -5,12 +5,12 @@ import ru.otus.messagesystem.message.MessageType;
 
 import java.net.Socket;
 
-public class MsClientSocket implements MsClient {
+public class MsClientProxy implements MsClient {
 
     private final Socket socket;
     private final String name;
 
-    public MsClientSocket(Socket socket, String name) {
+    public MsClientProxy(Socket socket, String name) {
         this.socket = socket;
         this.name = name;
     }
