@@ -8,7 +8,6 @@ import ru.chupaYchups.properties.MessageSystemClientNameProps;
 @SpringBootApplication
 @EnableConfigurationProperties({MessageSystemClientNameProps.class})
 public class Main {
-
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
     }
