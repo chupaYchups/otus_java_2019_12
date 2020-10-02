@@ -6,13 +6,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import ru.chupaYchups.database.cachehw.HwCache;
 import ru.chupaYchups.database.cachehw.MyCache;
-import ru.chupaYchups.core.hibernate.HibernateUtils;
+import ru.chupaYchups.database.hibernate.HibernateUtils;
 import ru.chupaYchups.database.model.Address;
 import ru.chupaYchups.database.model.Phone;
 import ru.chupaYchups.database.model.User;
 import ru.chupaYchups.database.service.DBServiceUser;
 import ru.chupaYchups.service.InitializationService;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
