@@ -1,4 +1,4 @@
-package ru.chupaYchups.core.hibernate;
+package ru.chupaYchups.database.hibernate;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
