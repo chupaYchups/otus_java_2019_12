@@ -25,6 +25,6 @@ public class UsersWsController {
 
     @MessageMapping("/getUserList")
     public void getUserList() {
-        frontService.getUserList();
+        frontService.sendUsersListToClient();
     }
 }

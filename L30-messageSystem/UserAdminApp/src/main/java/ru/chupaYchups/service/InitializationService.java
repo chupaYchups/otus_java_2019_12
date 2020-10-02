@@ -1,7 +1,7 @@
 package ru.chupaYchups.service;
 
-import ru.chupaYchups.core.model.User;
-import ru.chupaYchups.core.service.DBServiceUser;
+import ru.chupaYchups.database.model.User;
+import ru.chupaYchups.database.service.DBServiceUser;
 
 public class InitializationService {
 

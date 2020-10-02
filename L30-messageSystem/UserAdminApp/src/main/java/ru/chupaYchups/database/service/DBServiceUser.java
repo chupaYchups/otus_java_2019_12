@@ -1,7 +1,6 @@
-package ru.chupaYchups.core.service;
+package ru.chupaYchups.database.service;
 
-import ru.chupaYchups.core.model.User;
-
+import ru.chupaYchups.database.model.User;
 import java.util.List;
 import java.util.Optional;
 

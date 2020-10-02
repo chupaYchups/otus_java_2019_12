@@ -1,4 +1,4 @@
-package ru.chupaYchups.core.service;
+package ru.chupaYchups.database.service;
 
 public class DbServiceException extends RuntimeException {
     public DbServiceException(Exception e) {

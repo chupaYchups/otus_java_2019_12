@@ -1,8 +1,8 @@
-package ru.chupaYchups.core.hibernate.sessionmanager;
+package ru.chupaYchups.database.hibernate.sessionmanager;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import ru.chupaYchups.core.sessionmanager.DatabaseSession;
+import ru.chupaYchups.database.sessionmanager.DatabaseSession;
 
 public class DatabaseSessionHibernate implements DatabaseSession {
     private final Session session;

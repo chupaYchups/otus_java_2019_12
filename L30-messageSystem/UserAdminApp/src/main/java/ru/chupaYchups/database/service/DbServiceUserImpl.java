@@ -1,18 +1,17 @@
-package ru.chupaYchups.core.service;
+package ru.chupaYchups.database.service;
 
-import ru.chupaYchups.core.dao.UserDao;
 import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.chupaYchups.database.cachehw.HwCache;
-import ru.chupaYchups.core.model.User;
-import ru.chupaYchups.core.sessionmanager.SessionManager;
+import ru.chupaYchups.database.dao.UserDao;
+import ru.chupaYchups.database.model.User;
+import ru.chupaYchups.database.sessionmanager.SessionManager;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-
 
 @Service
 public class DbServiceUserImpl implements DBServiceUser {

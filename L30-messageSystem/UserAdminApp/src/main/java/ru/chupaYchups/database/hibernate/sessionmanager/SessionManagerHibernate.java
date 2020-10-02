@@ -1,11 +1,11 @@
-package ru.chupaYchups.core.hibernate.sessionmanager;
+package ru.chupaYchups.database.hibernate.sessionmanager;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Component;
-import ru.chupaYchups.core.sessionmanager.SessionManager;
-import ru.chupaYchups.core.sessionmanager.SessionManagerException;
+import ru.chupaYchups.database.sessionmanager.SessionManager;
+import ru.chupaYchups.database.sessionmanager.SessionManagerException;
 
 @Component
 public class SessionManagerHibernate implements SessionManager {
