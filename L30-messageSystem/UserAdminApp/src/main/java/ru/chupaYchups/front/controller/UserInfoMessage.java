@@ -1,4 +1,4 @@
-package ru.chupaYchups.controller;
+package ru.chupaYchups.front.controller;
 
 public class UserInfoMessage {
 

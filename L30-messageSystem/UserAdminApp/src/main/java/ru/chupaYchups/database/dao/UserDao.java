@@ -1,7 +1,7 @@
-package ru.chupaYchups.core.dao;
+package ru.chupaYchups.database.dao;
 
-import ru.chupaYchups.core.model.User;
-import ru.chupaYchups.core.sessionmanager.SessionManager;
+import ru.chupaYchups.database.model.User;
+import ru.chupaYchups.database.sessionmanager.SessionManager;
 
 import java.util.List;
 import java.util.Optional;

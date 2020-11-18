@@ -31,7 +31,7 @@ public class FrontServiceImpl implements FrontService {
     }
 
     @Override
-    public void getUserList() {
+    public void sendUsersListToClient() {
         sendUserListRequestMsg();
     }
 

@@ -1,4 +1,4 @@
-package ru.chupaYchups.core.model;
+package ru.chupaYchups.database.model;
 
 import javax.persistence.*;
 import java.util.Objects;

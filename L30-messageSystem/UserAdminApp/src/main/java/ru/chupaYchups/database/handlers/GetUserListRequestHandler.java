@@ -1,7 +1,7 @@
-package ru.chupaYchups.handlers;
+package ru.chupaYchups.database.handlers;
 
-import ru.chupaYchups.core.model.User;
-import ru.chupaYchups.core.service.DBServiceUser;
+import ru.chupaYchups.database.model.User;
+import ru.chupaYchups.database.service.DBServiceUser;
 import ru.chupaYchups.dto.UserData;
 import ru.chupaYchups.dto.UserDataList;
 import ru.otus.messagesystem.RequestHandler;

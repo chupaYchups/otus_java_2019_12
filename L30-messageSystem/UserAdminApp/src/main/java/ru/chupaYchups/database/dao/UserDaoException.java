@@ -1,4 +1,4 @@
-package ru.chupaYchups.core.dao;
+package ru.chupaYchups.database.dao;
 
 public class UserDaoException extends RuntimeException {
     public UserDaoException(Exception ex) {

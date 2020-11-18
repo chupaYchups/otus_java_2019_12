@@ -2,25 +2,27 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>L30-messageSystem</artifactId>
-        <groupId>org.springframework.boot</groupId>
-        <version>2.3.3.RELEASE</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>MessageSystem</artifactId>
+        <parent>
+            <artifactId>L30-messageSystem</artifactId>
+            <groupId>ru.otus</groupId>
+            <version>2019-03-SNAPSHOT</version>
+        </parent>
 
-    <properties>
-        <logback-classic.version>1.2.3</logback-classic.version>
-    </properties>
+        <modelVersion>4.0.0</modelVersion>
 
-    <dependencies>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback-classic.version}</version>
-        </dependency>
-    </dependencies>
+        <artifactId>MessageSystem</artifactId>
 
-</project>
+        <properties>
+            <logback-classic.version>1.2.3</logback-classic.version>
+        </properties>
+
+        <dependencies>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback-classic.version}</version>
+            </dependency>
+        </dependencies>
+
+    </project>

@@ -1,4 +1,4 @@
-package ru.chupaYchups.controller;
+package ru.chupaYchups.front.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +25,6 @@ public class UsersWsController {
 
     @MessageMapping("/getUserList")
     public void getUserList() {
-        frontService.getUserList();
+        frontService.sendUsersListToClient();
     }
 }

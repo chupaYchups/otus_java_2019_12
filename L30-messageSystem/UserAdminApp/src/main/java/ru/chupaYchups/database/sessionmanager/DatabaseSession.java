@@ -1,4 +1,4 @@
-package ru.chupaYchups.core.sessionmanager;
+package ru.chupaYchups.database.sessionmanager;
 
 public interface DatabaseSession {
 }
