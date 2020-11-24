@@ -69,7 +69,7 @@ public class SocketServerImpl implements SocketServer {
                 input = in.readLine();
                 if (input != null) {
                     System.out.println("Input from socket : " + input);
-//                    processMessage(input, socket);
+                    processMessage(input, socket);
                     outputStream.println("----->> OK");
                 }
             }
@@ -82,8 +82,10 @@ public class SocketServerImpl implements SocketServer {
 
     private void processMessage(String input, Socket socket) {
         Message message = gson.fromJson(input, Message.class);
-        if (!registeredClientNames.contains(message.getFrom())) {
-            messageSystem.addClient(new MsClientProxy(socket, (message.getFrom())));
+        String clientName = message.getFrom();
+        if (!registeredClientNames.contains(clientName)) {
+            registeredClientNames.add(clientName);
+            messageSystem.addClient(new MsClientProxy(socket, (clientName)));
         }
         messageSystem.newMessage(message);
     }

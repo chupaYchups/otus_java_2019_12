@@ -54,10 +54,10 @@ public final class MessageSystemImpl implements MessageSystem {
 
     @Override
     public void addClient(MsClient msClient) {
-        logger.info("new client:{}", msClient.getName());
         if (clientMap.containsKey(msClient.getName())) {
             throw new IllegalArgumentException("Error. client: " + msClient.getName() + " already exists");
         }
+        logger.info("new client:{}", msClient.getName());
         clientMap.put(msClient.getName(), msClient);
     }
 
