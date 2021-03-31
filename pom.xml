@@ -37,7 +37,7 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <com.gooogle.guava.version>27.1-jre</com.gooogle.guava.version>
+        <com.gooogle.guava.version>29.0-jre</com.gooogle.guava.version>
     </properties>
 
     <dependencyManagement>
